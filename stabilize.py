@@ -78,7 +78,7 @@ if len(sys.argv) > 1:
     Ki = float(sys.argv[3])
 
 else:    
-    Kp = 2
+    Kp = 0.9
     Kd = 0
     Ki = 0
 
