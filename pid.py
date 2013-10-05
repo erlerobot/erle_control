@@ -1,5 +1,12 @@
 '''
+                                          
+ _____     _        _____     _       _   
+|   __|___| |___   | __  |___| |_ ___| |_ 
+|   __|  _| | -_|  |    -| . | . | . |  _|
+|_____|_| |_|___|  |__|__|___|___|___|_|  
+                                          
 @author: Víctor Mayoral Vilches
+@description: PID controller class. 
 '''
 import time
 
@@ -47,7 +54,7 @@ class PID:
         self.Cd = 0
 
 
-    def GenOut(self, error):
+    def update(self, error):
         """ Performs a PID computation and returns a control value based on
             the elapsed time (dt) and the error signal from a summing junction
             (the error parameter).

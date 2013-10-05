@@ -1,7 +1,13 @@
 '''
+                                          
+ _____     _        _____     _       _   
+|   __|___| |___   | __  |___| |_ ___| |_ 
+|   __|  _| | -_|  |    -| . | . | . |  _|
+|_____|_| |_|___|  |__|__|___|___|___|_|  
+                                          
 @author: Víctor Mayoral Vilches
+@description: Interface with the DC motors.
 '''
-
 class Motor:
     """ Class for interfacing with the motors.
 
