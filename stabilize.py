@@ -34,14 +34,18 @@ motor4-motor(....)
 motors=[motor1,motor2,motor3,motor4]
 
 #TODO instantiate PID controllers
-RollPID=PID(.....)
-PitchPID=PID(.....)
+rollPID=PID(.....)
+pitchPID=PID(.....)
+yawPID=PID(.....)
+#zPID=PID(.....)
+#xposPID=PID(.....)
+#yposPID=PID(.....)
 
 ############################
 #loop
 ############################
 while 1:
-    #Measure
+    #Measure angles
     roll_m, pitch_m, yaw_m = imu.read(...)
     #MyKalman.measure([roll,pitch, yaw])
     
@@ -67,6 +71,7 @@ while 1:
 
     """
 
+
     """
     #QUAD_FORMATION_X
     roll = roll >> 1;
@@ -77,7 +82,8 @@ while 1:
     motorPowerM4 =  limitThrust(thrust + roll + pitch - yaw);
     """
 
-    #QUAD_FORMATION_NORMAL
+    #QUAD_FORMATION_NORMAL first approach
+    #TODO use the dynamical model equation to get the motor voltage
     motorPowerM1 = limitThrust(thrust + pitch + yaw);
     motorPowerM2 = limitThrust(thrust - roll - yaw);
     motorPowerM3 =  limitThrust(thrust - pitch + yaw);
