@@ -25,7 +25,7 @@ class Motor:
         by Adafruit_BBIO.
         The duty should be provided in the range (0,100) however the speed
         will be accepted in the range (-100,100) so that both directions 
-        clockwise (CW) and counter-clockwise (CCW) can be implemented. 
+        clockwise (CW, assumed positive) and counter-clockwise (CCW) can be implemented. 
     """ 
     def __init__(self, motor_number=1, max_speed=100, min_speed=-100):
         self.speed = 0;
