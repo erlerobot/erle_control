@@ -24,6 +24,7 @@ class IMU:
         pass
 
     """ Reads the data from the I2C interface (50 Hz max).
+        @return roll, pitch, yaw
     """
     def i2cRead(self):
         #TODO implement
