@@ -6,7 +6,7 @@
 |   __|  _| | -_|  |    -| . | . | . |  _|
 |_____|_| |_|___|  |__|__|___|___|___|_|  
                                           
-@author: Víctor Mayoral Vilches
+@author: Víctor Mayoral Vilches <victor@erlerobot.com>
 @description: PID controller class. 
 '''
 import time

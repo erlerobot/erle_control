@@ -6,7 +6,7 @@
 |   __|  _| | -_|  |    -| . | . | . |  _|
 |_____|_| |_|___|  |__|__|___|___|___|_|  
                                           
-@author: Víctor Mayoral Vilches
+@author: Víctor Mayoral Vilches <victor@erlerobot.com>
 @description: Code for stabilizing the quadrotor. It runs and infinite
 loop that adjust the 4 motors according to the IMU readings.
 '''
