@@ -13,31 +13,34 @@ loop that adjust the 4 motors according to the IMU readings.
 
 from imu_class import IMU
 from sensor_class import Sensor
+from motors import Motor
 
 """ Limits the thrust passed to the motors
-    in the range 0-100
+    in the range (-100,100)
 """
-def limitThrust():
-    #TODO implement
-    pass
+def limitThrust(thrust):
+    if thrust > 100:
+        thrush = 100
+    elif thrust < -100:
+        thrust = -100
+    return thrust
 
 #instantiate IMU
 #TODO see how to import C interface to python
-imu=
+imu=IMU() 
 #MyKalman=KalmanFilter(....)
 
 #instantiate motors and put them together in a list
-#TODO create motor class + api
-motor1=motor(....)
-motor2=motor(....)
-motor3=motor(....)
-motor4-motor(....)
+motor1=Motor(1)
+motor2=Motor(2)
+motor3=Motor(3)
+motor4-Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
 #TODO instantiate PID controllers
-rollPID=PID(.....)
-pitchPID=PID(.....)
-yawPID=PID(.....)
+rollPID=PID()
+pitchPID=PID()
+yawPID=PID()
 #zPID=PID(.....)
 #xposPID=PID(.....)
 #yposPID=PID(.....)
@@ -46,8 +49,12 @@ yawPID=PID(.....)
 #loop
 ############################
 while 1:
-    #Measure angles
-    roll_m, pitch_m, yaw_m = imu.read(...)
+    print "------------------------"
+    print "     stabilize loop     "
+    print "------------------------"
+    #TODO complete call
+    #Measure angles    
+    roll_m, pitch_m, yaw_m = imu.i2cRead()
     #MyKalman.measure([roll,pitch, yaw])
     
     #Run the PIDs
@@ -57,6 +64,24 @@ while 1:
     #z = zPID.update(z - z_m)
     #xpos = xposPID.update(xpos - xpos_m)
     #ypos = yposPID.update(ypos - ypos_m)
+
+    #TODO change this parameter and see the behaviour
+    #thrust is provided by the controller    
+    thrust = 0
+
+    #Log the values:
+    print "------------------------"
+    print "Measured angles:"
+    print "     pitch:" + pitch_m
+    print "     roll:" + roll_m
+    print "     yaw:" + yaw_m
+    print "PID output angles:"
+    print "     pitch:" + pitch
+    print "     roll:" + roll
+    print "     yaw:" + yaw
+    print "thrust:" + thrust
+    
+
 
     """ When using the dynamical model with u:
 
@@ -84,12 +109,21 @@ while 1:
     """
 
     #QUAD_FORMATION_NORMAL first approach
+    # I'm assuming the motorPowers can be negative as well (angle in CCW)
     #TODO use the dynamical model equation to get the motor voltage
     motorPowerM1 = limitThrust(thrust + pitch + yaw);
     motorPowerM2 = limitThrust(thrust - roll - yaw);
     motorPowerM3 =  limitThrust(thrust - pitch + yaw);
     motorPowerM4 =  limitThrust(thrust + roll - yaw);
- 
+
+    #Log the motor powers:
+    print "------------------------"
+    print "motorPowerM1:" + motorPowerM1
+    print "motorPowerM2:" + motorPowerM2
+    print "motorPowerM3:" + motorPowerM3
+    print "motorPowerM4:" + motorPowerM4
+    print "------------------------"
+    
     #Set motor speeds
     motor1.setSpeed(motorPowerM1)
     motor2.setSpeed(motorPowerM2)
@@ -102,7 +136,8 @@ while 1:
     
     #Kalman Prediction
     #MyKalman.predict()
-    delay = 4 #delay ms 
+    #delay = 4 #delay ms (250 Hz) 
+    delay = 20 #delay ms (50 Hz)
     time.sleep(delay)
 
 ############################
