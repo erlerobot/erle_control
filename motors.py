@@ -1,3 +1,4 @@
+# -*- encoding: utf-8 -*-
 '''
                                           
  _____     _        _____     _       _   
@@ -39,7 +40,7 @@ class Motor:
         self.max_speed= max_speed
         self.min_speed= min_speed
         self.frequency = 2000
-        self.motor_pins = self.motor_pins_list[self.motor_number]
+        self.motor_pins = self.motor_pins_list[self.motor_number - 1]
         #perform PWM initialization
         self.duty_IN1 = 0 # duty input 1 of the motor controller IC 
         self.duty_IN2 = 0 
@@ -51,11 +52,11 @@ class Motor:
     def setSpeed(self, speed):
         if speed<=self.max_speed or speed>=self.min_speed:
             if speed > 0:
-                self.duty_IN1 = speed
+                self.duty_IN1 = abs(speed)
                 self.duty_IN2 = 0
             else:
                 self.duty_IN1 = 0
-                self.duty_IN2 = speed            
+                self.duty_IN2 = abs(speed)            
         else:
             raise Exception("Speed provided not in the [-100,100] range!")
 
