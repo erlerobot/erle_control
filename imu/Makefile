@@ -17,7 +17,8 @@ OBJS = inv_mpu.o \
        linux_glue.o \
        mpu9150.o \
        quaternion.o \
-       vector3d.o
+       vector3d.o \
+       imu.o
 
 
 all : libimu.so
