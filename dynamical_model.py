@@ -14,6 +14,7 @@ quadrotor UAV"
 (http://www.st.ewi.tudelft.nl/~koen/in4073/Resources/MSc_thesis_X-UFO.pdf)
 '''
 import math
+import numpy as np
 
 class Dynamical_Model:
     def __init__(self): 
@@ -55,12 +56,20 @@ class Dynamical_Model:
         self.Izz = 1.121e-2
 
         # motor parameters
-        self.k_m = TODO # torque constant
-        self.tau = TODO # motor time constant
-        self.eta = 100 # motor efficiency
-        self.Omega_0 = TODO # point of linearization of the rotor speeds
+        # TODO complete the motor parameters
+        self.k_m = #TODO # torque constant
+        self.tau = #TODO # motor time constant
+        self.eta = #TODO # motor efficiency
+        self.Omega_0 = #TODO # point of linearization of the rotor speeds
         self.r = 4 # Reduction ratio
         self.J_t = 6.0100e-5 # Rotor inertia [kg m^2]
+
+        # matrix for calculating the motor voltages form the control inputs
+        self.m = np.matrix( ((1/(4*self.b),0, 1/(2*self.b), -1/(4*self.b)), 
+                        (1/(4*self.b),-1/(2*self.b), 0, 1/(4*self.b)), 
+                        (1/(4*self.b),0, -1/(2*self.b), -1/(4*self.b)), 
+                        (1/(4*self.b),1/(2*self.b), 0 ,  1/(4*self.b))) )
+
 
 
     """ Compute the motor voltages from the control inputs. Keep in mind when
@@ -69,13 +78,15 @@ class Dynamical_Model:
             - U2: roll
             - U3: pitch
             - U4: yaw
+
+        @returns: u=[u_m1, u_m2, u_m3, u_m3], motor voltages
     """
     def motor_inversion(thrust, roll, pitch, yaw):
+        # the control inputs
         U = np.array( ((thrush, roll, pitch, yaw)) )
-        m = np.matrix( ((1/(4*self.b),0, 1/(2*self.b), -1/(4*self.b)), 
-                        (1/(4*self.b),-1/(2*self.b), 0, 1/(4*self.b)), 
-                        (1/(4*self.b),0, -1/(2*self.b), -1/(4*self.b)), 
-                        (1/(4*self.b),1/(2*self.b), 0 ,  1/(4*self.b))) )
+        # the motor voltages
+        u = self.k_m * self.tau ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.pow(self.r,3)*self.J_t))*np.sqrt(np.dot(self.m,U))- self.d*np.pow(self.Omega_0,3)/(self.eta*np.pow(self.r,3)*self.J_t))
+        return u
 
 
 
