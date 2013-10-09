@@ -199,6 +199,11 @@ void read_loop(unsigned int sample_rate)
 	printf("\n\n");
 }
 
+int read_rawGyro(short* rawGyro){
+	mpudata_t mpu;
+	// TODO code a function that returns the rawGyro info
+}
+
 void print_fused_euler_angles(mpudata_t *mpu)
 {
 	printf("\rX: %0.0f Y: %0.0f Z: %0.0f        ",
