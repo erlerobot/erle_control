@@ -10,6 +10,7 @@
 @description: python interface with the MPU-9150.
 '''
 from ctypes import *
+#from time import clock
 
 class IMU:
     """ Interface with the Inertial Measurement Unit. 
@@ -29,7 +30,7 @@ class IMU:
         self.yaw_mix_factor = 3
 
         # initialize the IMU
-        res = self.lib.mpu9150_init(i2c_bus, sample_rate, yaw_mix_factor)
+        res = self.lib.mpu9150_init(self.i2c_bus, self.sample_rate, self.yaw_mix_factor)
         if res:
             Exception("Error when initializing the IMU!")
         # set calibration files
@@ -41,17 +42,24 @@ class IMU:
             Exception("Error while calibration: magcal.txt")
 
 
-    """ Reads the fused data from the sensor
-        @return roll, pitch, yaw
+    """ Reads the raw gyro data from the sensor
+        @return  gyroX, gyroY, gyroZ
     """
-    def fusedRead(self):
-        """
-        # Code for passing a parameter directly to a C function
-        # however it doesn't seem to work. Some debuggin might be neccesary
-        mpu = Mpudata_t()
-        self.lib.mpu9150_read(addressof(mpu))
-        """
-        #TODO create C functions that return
+    def read_rawGyro(self):    
+        #start = clock()
+        while 1:
+                # Parameters to be passed by reference
+                x = c_short(0)
+                y = c_short(0)
+                z = c_short(0)
+                function = self.lib.read_rawGyro
+                function.argtypes = [POINTER(c_short), POINTER(c_short), POINTER(c_short)]
+                res = self.lib.read_rawGyro(byref(x), byref(y), byref(z)) 
+                if res == 0:
+                        #time_s = clock() - start
+                        #print time_s
+                        return x.value, y.value, z.value
+
 
 
     """ Reads data from the FIFO list (250 Hz max?).
@@ -70,23 +78,9 @@ class IMU:
         pass
 
 """
-# array class
-Vector3d_t = 3*c_float
-# array class
-Quaternion_t = 4*c_float
-# struct 
-class Mpudata_t(Structure):
-         _fields_ = [("rawGyro", c_short*3),
-                     ("rawAccel", c_short*3),
-                     ("rawQuat", c_long*4),
-                     ("dmpTimestamp", c_ulong*4),
-                     ("rawMag", c_short*4),
-                     ("magTimestamp", c_ulong*4),
-                     ("calibratedAccel", c_short*4),
-                     ("calibratedMag", c_short*4),
-                     ("fusedQuat", Quaternion_t),
-                     ("fusedEuler", Vector3d_t),
-                     ("lastDMPYaw", c_float),
-                     ("lastYaw", c_float)
-                    ]
+imu = IMU()
+gyrox, gyroy, gyroz = imu.read_rawGyro()
+print gyrox
+print gyroy
+print gyroz
 """
