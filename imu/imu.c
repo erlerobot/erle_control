@@ -42,7 +42,38 @@ void print_calibrated_mag(mpudata_t *mpu);
 void register_sig_handler();
 void sigint_handler(int sig);
 
+int read_rawGyro(short* gyroX, short* gyroY, short* gyroZ);
+int read_rawAccel(short* accelX, short* accelY, short* accelZ);
+int read_rawQuat(long* quat1, long* quat2, long* quat3, long* quat4);
+int read_dmpTimestamp(unsigned long* dmpTimestamp);
+int read_rawMag(short* magX, short* magY, short* magZ);
+int read_magTimestamp(unsigned long* magTimestamp);
+int read_calibratedAccel(short* calibratedAccelX, short* calibratedAccelY, short* calibratedAccelZ);
+int read_calibratedMag(short* calibratedMagX, short* calibratedMagY, short* calibratedMagZ);
+
 int done;
+
+// ----------------------------------
+
+int read_rawGyro(short* gyroX, short* gyroY, short* gyroZ){
+        mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+                printf("\rX: %d, Y: %d Z: %d        \n",
+                        mpu.rawGyro[0],
+                        mpu.rawGyro[1],
+                        mpu.rawGyro[2]);
+                *gyroX = (mpu.rawGyro[0]);
+                *gyroY = (mpu.rawGyro[1]);
+                *gyroZ = (mpu.rawGyro[2]);
+                return 0;
+        }
+        return -1;
+}
+
+
+
+// ----------------------------------
 
 void usage(char *argv_0)
 {
@@ -201,7 +232,12 @@ void read_loop(unsigned int sample_rate)
 
 int read_rawGyro(short* rawGyro){
 	mpudata_t mpu;
-	// TODO code a function that returns the rawGyro info
+	memset(&mpu, 0, sizeof(mpudata_t));
+	if (mpu9150_read(&mpu) == 0) {
+		rawGyro = mpu.rawGyro;
+		return 0;
+	}
+	return -1;
 }
 
 void print_fused_euler_angles(mpudata_t *mpu)
