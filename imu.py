@@ -64,11 +64,13 @@ class IMU:
             Exception("Error while calibration: magcal.txt")
 
 
-    """ Reads the raw gyro data from the sensor
+    """ Reads the raw gyro data from the sensor.
+            pass a "timing = 1" parameter to measure the time for the measurement.
         @return  gyroX, gyroY, gyroZ
     """
-    def read_rawGyro(self):    
-        #start = clock()
+    def read_rawGyro(self, timing = 0):    
+        if timing:
+            start = clock()
         while 1:
                 # Parameters to be passed by reference
                 x = c_short(0)
@@ -78,15 +80,17 @@ class IMU:
                 function.argtypes = [POINTER(c_float), POINTER(c_float), POINTER(c_float)]
                 res = function(byref(x), byref(y), byref(z)) 
                 if res == 0:
-                        #time_s = clock() - start
-                        #print time_s
+                        time_s = clock() - start
+                        print time_s
                         return x.value, y.value, z.value
     
     """ Reads fused euler angles
+            pass a "timing = 1" parameter to measure the time for the measurement.
         @return  eulerX, eulerY, eulerZ (degrees)
     """
-    def read_fusedEuler(self):    
-        #start = clock()
+    def read_fusedEuler(self, timing = 0):    
+        if timing:
+            start = clock()
         while 1:
                 # DMP fused euler angles
                 fusedX = c_float(0)
@@ -96,18 +100,22 @@ class IMU:
                 function.argtypes = [POINTER(c_short), POINTER(c_short), POINTER(c_short)]
                 res = function(byref(x), byref(y), byref(z)) 
                 if res == 0:
-                        #time_s = clock() - start
-                        #print time_s
+                        if timing:
+                            time_s = clock() - start
+                            print time_s
                         return x.value, y.value, z.value
 
 
 
 
     """ Reads all the IMU sensor information and stores it into a Mpudata_t.
+            pass a "timing = 1" parameter to measure the time for the measurement.
+
             TODO: Eventually substitute this way of getting data for a ctypes direct cast
     """
-    def read_mpudata_t(self):    
-        #start = clock()
+    def read_mpudata_t(self, timing = 0):    
+        if timing:
+            start = clock()
         while 1:
                 # Parameters to be passed by reference
                 # Raw gyro values
@@ -174,8 +182,9 @@ class IMU:
                                 byref(fusedX), byref(fusedY), byref(fusedZ), byref(lastDMPYaw), byref(lastYaw))
 
                 if res == 0:
-                        #time_s = clock() - start
-                        #print time_s
+                        if timing:
+                            time_s = clock() - start
+                            print time_s
                         # Construct an instance of Mpudata_t
                         mpudata_t = Mpudata_t(rawGyro = (c_short*3)(*[gyroX.value, gyroY.value, gyroZ.value]),
                                                 rawAccel = (c_short*3)(*[accelX.value, accelY.value, accelZ.value]),

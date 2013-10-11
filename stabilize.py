@@ -54,7 +54,8 @@ while 1:
     print "------------------------"
     #TODO complete call
     #Measure angles    
-    roll_m, pitch_m, yaw_m = imu.i2cRead()
+    #roll_m, pitch_m, yaw_m = imu.read_fusedEuler()
+    roll_m, pitch_m, yaw_m = imu.read_fusedEuler(1)
     #MyKalman.measure([roll,pitch, yaw])
     
     #Run the PIDs
@@ -66,7 +67,7 @@ while 1:
     #ypos = yposPID.update(ypos - ypos_m)
 
     #TODO change this parameter and see the behaviour
-    #thrust is provided by the controller    
+    #thrust is provided by the controller (NOTE: this is also treated as "z" and it should use the zPID controller)
     thrust = 0
 
     #Log the values:
