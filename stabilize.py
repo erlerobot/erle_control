@@ -136,8 +136,8 @@ while 1:
     
     #Kalman Prediction
     #MyKalman.predict()
-    #delay = 4 #delay ms (250 Hz) 
-    delay = 20 #delay ms (50 Hz)
+    #delay = 4e-3 #delay ms (250 Hz) 
+    delay = 20e-3 #delay ms (50 Hz)
     time.sleep(delay)
 
 ############################

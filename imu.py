@@ -7,10 +7,32 @@
 |_____|_| |_|___|  |__|__|___|___|___|_|  
                                           
 @author: Víctor Mayoral Vilches <victor@erlerobot.com>
-@description: python interface with the MPU-9150.
+@description: python interface with the IMU
 '''
 from ctypes import *
 #from time import clock
+
+# array class
+Vector3d_t = 3*c_float
+# array class
+Quaternion_t = 4*c_float
+
+# struct with C types
+class Mpudata_t(Structure):
+         _fields_ = [("rawGyro", c_short*3),
+                     ("rawAccel", c_short*3),
+                     ("rawQuat", c_long*4),
+                     ("dmpTimestamp", c_ulong*4),
+                     ("rawMag", c_short*4),
+                     ("magTimestamp", c_ulong*4),
+                     ("calibratedAccel", c_short*4),
+                     ("calibratedMag", c_short*4),
+                     ("fusedQuat", 4*c_float),
+                     ("fusedEuler", 3*c_float),
+                     ("lastDMPYaw", c_float),
+                     ("lastYaw", c_float)
+                    ]
+
 
 class IMU:
     """ Interface with the Inertial Measurement Unit. 
@@ -54,28 +76,90 @@ class IMU:
                 z = c_short(0)
                 function = self.lib.read_rawGyro
                 function.argtypes = [POINTER(c_short), POINTER(c_short), POINTER(c_short)]
-                res = self.lib.read_rawGyro(byref(x), byref(y), byref(z)) 
+                res = function(byref(x), byref(y), byref(z)) 
                 if res == 0:
                         #time_s = clock() - start
                         #print time_s
                         return x.value, y.value, z.value
 
 
-
-    """ Reads data from the FIFO list (250 Hz max?).
+    """ Reads all the IMU sensor information and stores it into a Mpudata_t.
+            TODO: Eventually substitute this way of getting data for a ctypes direct cast
     """
-    def fifoRead(self):
-        #TODO implement
-        pass
+    def read_mpudata_t(self):    
+        #start = clock()
+        while 1:
+                # Parameters to be passed by reference
+                # Raw gyro values
+                gyroX = c_short(0)
+                gyroY = c_short(0)
+                gyroZ = c_short(0)
+                # Raw accel values
+                accelX = c_short(0)
+                accelY = c_short(0)
+                accelZ = c_short(0)
+                # Raw quaternion values
+                quat1 = c_long(0)
+                quat2 = c_long(0)
+                quat3 = c_long(0)
+                quat4 = c_long(0)
+                # DMP timestamp
+                dmpTimestamp = c_ulong(0)                
+                # Raw accel values
+                magX = c_short(0)
+                magY = c_short(0)
+                magZ = c_short(0)
+                # magnetometer timestamp
+                magTimestamp = c_ulong(0)
+                # Calibrated accelerometer values
+                calibratedAccelX = c_short(0)
+                calibratedAccelY = c_short(0)
+                calibratedAccelZ = c_short(0)
+                # Calibrated magnetometer values
+                calibratedMagX = c_short(0)
+                calibratedMagY = c_short(0)
+                calibratedMagZ = c_short(0)
+                # DMP fused quaternions
+                fusedQuat1 = c_float(0)
+                fusedQuat2 = c_float(0)
+                fusedQuat3 = c_float(0)
+                fusedQuat4 = c_float(0)
+                # DMP fused euler angles
+                fusedX = c_float(0)
+                fusedY = c_float(0)
+                fusedZ = c_float(0)
+                # Last DMP Yaw
+                lastDMPYaw = c_float(0)
+                # Last Yaw
+                lastYaw = c_float(0)
 
-    """ Reads raw data (withouth using DMP).
-    """
-    def rawRead(self):
-        #TODO implement
-        pass
+                function = self.lib.read_mpudata_t
+                function.argtypes = [POINTER(c_short), POINTER(c_short), POINTER(c_short),
+                                    POINTER(c_short), POINTER(c_short), POINTER(c_short),
+                                    POINTER(c_long), POINTER(c_long), POINTER(c_long), POINTER(c_long),
+                                    POINTER(c_ulong),POINTER(c_short), POINTER(c_short), POINTER(c_short),
+                                    POINTER(c_ulong),POINTER(c_short), POINTER(c_short), POINTER(c_short),
+                                    POINTER(c_short), POINTER(c_short), POINTER(c_short),
+                                    POINTER(c_float), POINTER(c_float), POINTER(c_float), POINTER(c_float),
+                                    POINTER(c_float), POINTER(c_float), POINTER(c_float),
+                                    POINTER(c_float), POINTER(c_float)]
 
-    def calibration(self):
-        pass
+                res = function(byref(gyroX), byref(gyroY), byref(gyroZ),
+                                byref(accelX), byref(accelY), byref(accelZ),
+                                byref(quat1), byref(quat2), byref(quat3), byref(quat4),
+                                byref(dmpTimestamp), byref(magX), byref(magY), byref(magZ), 
+                                byref(magTimestamp), byref(calibratedAccelX), byref(calibratedAccelY), byref(calibratedAccelZ), 
+                                byref(calibratedMagX), byref(calibratedMagY), byref(calibratedMagZ),
+                                byref(fusedQuat1), byref(fusedQuat2), byref(fusedQuat3), byref(fusedQuat4),
+                                byref(fusedX), byref(fusedY), byref(fusedZ), byref(lastDMPYaw), byref(lastYaw))
+
+                if res == 0:
+                        # Construct an instance of Mpudata_t
+                        mpudata_t = Mpudata_t(rawGyro[0] = gyroX, ...
+                        return x.value, y.value, z.value
+
+
+
 
 """
 imu = IMU()
@@ -84,3 +168,6 @@ print gyrox
 print gyroy
 print gyroz
 """
+
+
+

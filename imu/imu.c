@@ -50,6 +50,20 @@ int read_rawMag(short* magX, short* magY, short* magZ);
 int read_magTimestamp(unsigned long* magTimestamp);
 int read_calibratedAccel(short* calibratedAccelX, short* calibratedAccelY, short* calibratedAccelZ);
 int read_calibratedMag(short* calibratedMagX, short* calibratedMagY, short* calibratedMagZ);
+int read_fusedQuat(float* quat1, float* quat2, float* quat3, float* quat4);
+int read_fusedEuler(float* fusedX, float* fusedY, float* fusedZ);
+int read_lastDMPYaw(float* lastDMPYaw);
+int read_lastYaw(float* lastYaw);
+//TODO: Eventually substitute this last function for one that makes use of
+// a ctypes Structure for mpudata_t
+int read_mpudata_t(short* gyroX, short* gyroY, short* gyroZ, short* accelX, short* accelY, short* accelZ,
+					long* quat1, long* quat2, long* quat3, long* quat4, unsigned long* dmpTimestamp,
+					short* magX, short* magY, short* magZ, unsigned long* magTimestamp, 
+					short* calibratedAccelX, short* calibratedAccelY, short* calibratedAccelZ,
+					short* calibratedMagX, short* calibratedMagY, short* calibratedMagZ,
+					float* quat1, float* quat2, float* quat3, float* quat4, 
+					float* fusedX, float* fusedY, float* fusedZ, float* lastDMPYaw, float* lastYaw);
+
 
 int done;
 
@@ -59,19 +73,226 @@ int read_rawGyro(short* gyroX, short* gyroY, short* gyroZ){
         mpudata_t mpu;
         memset(&mpu, 0, sizeof(mpudata_t));
         if (mpu9150_read(&mpu) == 0) {
+                /*
                 printf("\rX: %d, Y: %d Z: %d        \n",
                         mpu.rawGyro[0],
                         mpu.rawGyro[1],
                         mpu.rawGyro[2]);
-                *gyroX = (mpu.rawGyro[0]);
-                *gyroY = (mpu.rawGyro[1]);
-                *gyroZ = (mpu.rawGyro[2]);
+                */
+                *gyroX = (mpu.rawGyro[VEC3_X]);
+                *gyroY = (mpu.rawGyro[VEC3_Y]);
+                *gyroZ = (mpu.rawGyro[VEC3_Z]);
                 return 0;
         }
         return -1;
 }
 
+int read_rawAccel(short* accelX, short* accelY, short* accelZ){
+        mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                printf("\rX: %d, Y: %d Z: %d        \n",
+                        mpu.rawAccel[0],
+                        mpu.rawAccel[1],
+                        mpu.rawAccel[2]);
+                */
+                *accelX = (mpu.rawAccel[VEC3_X]);
+                *accelY = (mpu.rawAccel[VEC3_Y]);
+                *accelZ = (mpu.rawAccel[VEC3_Z]);
+                return 0;
+        }
+        return -1;
+}
 
+int read_rawQuat(long* quat1, long* quat2, long* quat3, long* quat4){
+        mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                printf("\rQ1: %d, Q2: %d Q3: %d, Q4: %d  \n",
+                        mpu.rawQuat[0],
+                        mpu.rawQuat[1],
+                        mpu.rawQuat[2],
+                        mpu.rawQuat[3]);
+                */
+                *quat1 = (mpu.rawQuat[QUAT_W]);
+                *quat2 = (mpu.rawQuat[QUAT_X]);
+                *quat3 = (mpu.rawQuat[QUAT_W]);
+                *quat4 = (mpu.rawQuat[QUAT_Z]);
+
+                return 0;
+        }
+        return -1;
+}
+
+int read_dmpTimestamp(unsigned long* dmpTimestamp){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *dmpTimestamp = (mpu.dmpTimestamp);
+                return 0;
+        }
+        return -1;
+}
+
+int read_rawMag(short* magX, short* magY, short* magZ){
+        mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *magX = (mpu.rawMag[VEC3_X]);
+                *magY = (mpu.rawMag[VEC3_Y]);
+                *magZ = (mpu.rawMag[VEC3_Z]);
+                return 0;
+        }
+        return -1;
+}
+
+int read_magTimestamp(unsigned long* magTimestamp){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *magTimestamp = (mpu.magTimestamp);
+                return 0;
+        }
+        return -1;
+}
+
+int read_calibratedAccel(short* calibratedAccelX, short* calibratedAccelY, short* calibratedAccelZ){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *calibratedAccelX = (mpu.calibratedAccel[VEC3_X]);
+                *calibratedAccelY = (mpu.calibratedAccel[VEC3_Y]);
+                *calibratedAccelZ = (mpu.calibratedAccel[VEC3_Z]);
+                return 0;
+        }
+        return -1;
+}
+
+int read_calibratedMag(short* calibratedMagX, short* calibratedMagY, short* calibratedMagZ){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *calibratedMagX = (mpu.calibratedMag[VEC3_X]);
+                *calibratedMagY = (mpu.calibratedMag[VEC3_Y]);
+                *calibratedMagZ = (mpu.calibratedMag[VEC3_Z]);
+                return 0;
+        }
+        return -1;
+}
+
+int read_fusedQuat(float* fusedQuat1, float* fusedQuat2, float* fusedQuat3, float* fusedQuat4){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *fusedQuat1 = (mpu.fusedQuat[QUAT_W]);
+                *fusedQuat2 = (mpu.fusedQuat[QUAT_X]);
+                *fusedQuat3 = (mpu.fusedQuat[QUAT_Y]);
+                *fusedQuat4 = (mpu.fusedQuat[QUAT_Z]);
+                return 0;
+        }
+        return -1;
+}
+
+int read_fusedEuler(float* fusedX, float* fusedY, float* fusedZ){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *fusedX = (mpu.fusedEuler[VEC3_X]* RAD_TO_DEGREE);
+                *fusedY = (mpu.fusedEuler[VEC3_Y]* RAD_TO_DEGREE);
+                *fusedZ = (mpu.fusedEuler[VEC3_Z]* RAD_TO_DEGREE);
+                return 0;
+        }
+        return -1;
+}
+
+int read_lastDMPYaw(float* lastDMPYaw){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *lastDMPYaw = (mpu.lastDMPYaw);
+                return 0;
+        }
+        return -1;
+}
+
+int read_lastYaw(float* lastYaw){
+       	mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+        		/*
+                */
+                *lastYaw = (mpu.lastYaw);
+                return 0;
+        }
+        return -1;
+}
+
+/* Pass all the parameters */
+int read_mpudata_t(short* gyroX, short* gyroY, short* gyroZ, short* accelX, short* accelY, short* accelZ,
+					long* quat1, long* quat2, long* quat3, long* quat4, unsigned long* dmpTimestamp,
+					short* magX, short* magY, short* magZ, unsigned long* magTimestamp, 
+					short* calibratedAccelX, short* calibratedAccelY, short* calibratedAccelZ,
+					short* calibratedMagX, short* calibratedMagY, short* calibratedMagZ,
+					float* fusedQuat1, float* fusedQuat2, float* fusedQuat3, float* fusedQuat4,
+					float* fusedX, float* fusedY, float* fusedZ, float* lastDMPYaw, float* lastYaw){
+
+        mpudata_t mpu;
+        memset(&mpu, 0, sizeof(mpudata_t));
+        if (mpu9150_read(&mpu) == 0) {
+                /*
+                */
+                *gyroX = (mpu.rawGyro[VEC3_X]);
+                *gyroY = (mpu.rawGyro[VEC3_Y]);
+                *gyroZ = (mpu.rawGyro[VEC3_Z]);
+                *accelX = (mpu.rawAccel[VEC3_X]);
+                *accelY = (mpu.rawAccel[VEC3_Y]);
+                *accelZ = (mpu.rawAccel[VEC3_Z]);
+                *quat1 = (mpu.rawQuat[QUAT_W]);
+                *quat2 = (mpu.rawQuat[QUAT_X]);
+                *quat3 = (mpu.rawQuat[QUAT_W]);
+                *quat4 = (mpu.rawQuat[QUAT_Z]);
+                *dmpTimestamp = (mpu.dmpTimestamp);
+                *magX = (mpu.rawMag[VEC3_X]);
+                *magY = (mpu.rawMag[VEC3_Y]);
+                *magZ = (mpu.rawMag[VEC3_Z]);
+                *magTimestamp = (mpu.magTimestamp);
+                *calibratedAccelX = (mpu.calibratedAccel[VEC3_X]);
+                *calibratedAccelY = (mpu.calibratedAccel[VEC3_Y]);
+                *calibratedAccelZ = (mpu.calibratedAccel[VEC3_Z]);
+                *calibratedMagX = (mpu.calibratedMag[VEC3_X]);
+                *calibratedMagY = (mpu.calibratedMag[VEC3_Y]);
+                *calibratedMagZ = (mpu.calibratedMag[VEC3_Z]);
+                *fusedQuat1 = (mpu.fusedQuat[QUAT_W]);
+                *fusedQuat2 = (mpu.fusedQuat[QUAT_X]);
+                *fusedQuat3 = (mpu.fusedQuat[QUAT_Y]);
+                *fusedQuat4 = (mpu.fusedQuat[QUAT_Z]);
+                *fusedX = (mpu.fusedEuler[VEC3_X]* RAD_TO_DEGREE);
+                *fusedY = (mpu.fusedEuler[VEC3_Y]* RAD_TO_DEGREE);
+                *fusedZ = (mpu.fusedEuler[VEC3_Z]* RAD_TO_DEGREE);
+                *lastDMPYaw = (mpu.lastDMPYaw);
+                *lastYaw = (mpu.lastYaw);
+                return 0;
+        }
+        return -1;	
+}
 
 // ----------------------------------
 
