@@ -22,9 +22,9 @@ class Mpudata_t(Structure):
          _fields_ = [("rawGyro", c_short*3),
                      ("rawAccel", c_short*3),
                      ("rawQuat", c_long*4),
-                     ("dmpTimestamp", c_ulong*4),
+                     ("dmpTimestamp", c_ulong),
                      ("rawMag", c_short*4),
-                     ("magTimestamp", c_ulong*4),
+                     ("magTimestamp", c_ulong),
                      ("calibratedAccel", c_short*4),
                      ("calibratedMag", c_short*4),
                      ("fusedQuat", 4*c_float),
@@ -75,12 +75,32 @@ class IMU:
                 y = c_short(0)
                 z = c_short(0)
                 function = self.lib.read_rawGyro
+                function.argtypes = [POINTER(c_float), POINTER(c_float), POINTER(c_float)]
+                res = function(byref(x), byref(y), byref(z)) 
+                if res == 0:
+                        #time_s = clock() - start
+                        #print time_s
+                        return x.value, y.value, z.value
+    
+    """ Reads fused euler angles
+        @return  eulerX, eulerY, eulerZ (degrees)
+    """
+    def read_fusedEuler(self):    
+        #start = clock()
+        while 1:
+                # DMP fused euler angles
+                fusedX = c_float(0)
+                fusedY = c_float(0)
+                fusedZ = c_float(0)
+                function = self.lib.read_fusedEuler
                 function.argtypes = [POINTER(c_short), POINTER(c_short), POINTER(c_short)]
                 res = function(byref(x), byref(y), byref(z)) 
                 if res == 0:
                         #time_s = clock() - start
                         #print time_s
                         return x.value, y.value, z.value
+
+
 
 
     """ Reads all the IMU sensor information and stores it into a Mpudata_t.
@@ -154,10 +174,24 @@ class IMU:
                                 byref(fusedX), byref(fusedY), byref(fusedZ), byref(lastDMPYaw), byref(lastYaw))
 
                 if res == 0:
+                        #time_s = clock() - start
+                        #print time_s
                         # Construct an instance of Mpudata_t
-                        mpudata_t = Mpudata_t(rawGyro[0] = gyroX, ...
-                        return x.value, y.value, z.value
+                        mpudata_t = Mpudata_t(rawGyro = (c_short*3)(*[gyroX.value, gyroY.value, gyroZ.value]),
+                                                rawAccel = (c_short*3)(*[accelX.value, accelY.value, accelZ.value]),
+                                                rawQuat = (c_long*3)(*[quat1.value, quat2.value, quat3.value,, quat4.value]),
+                                                dmpTimestamp = (c_ulong)(dmpTimestamp.value),
+                                                rawMag = (c_short*3)(*[magX.value, magY.value, magZ.value]),
+                                                magTimestamp = (c_ulong)(magTimestamp.value),
+                                                calibratedAccel = (c_float*3)(*[calibratedAccelX.value, calibratedAccelY.value, calibratedAccelZ.value]),
+                                                calibratedMag = (c_float*3)(*[calibratedMagX.value, calibratedMagY.value, calibratedMagZ.value]),
+                                                fusedQuat = (c_float*4)(*[fusedQuat1.value, fusedQuat2.value, fusedQuat3.value, fusedQuat4.value]),
+                                                fusedEuler = (c_float*3)(*[fusedX.value, fusedY.value, fusedZ.value]),
+                                                lastDMPYaw = (c_float)(lastDMPYaw),
+                                                lastDMPYaw = (c_float)(lastYaw)
 
+                                            )                            
+                        return mpudata_t
 
 
 
