@@ -1,5 +1,8 @@
 #!/usr/bin/env python
-
+"""
+	@brief Test the motors behaviour
+	
+"""
 from motors import Motor
 import Adafruit_BBIO.GPIO as GPIO
 import time
@@ -22,24 +25,24 @@ import os
 ###############################
 
 # initial timer
-time.sleep(10)
+#time.sleep(10)
 
 speed = 10
 
 m1 = Motor(1);
-m1.setSpeed(speed);
+m1.setSpeedBrushless(speed)
 m1.go()
 
 m2 = Motor(2);
-m2.setSpeed(speed);
+m2.setSpeedBrushless(speed);
 m2.go()
 
 m3 = Motor(3);
-m3.setSpeed(speed);
+m3.setSpeedBrushless(speed);
 m3.go()
 
 m4 = Motor(4);
-m4.setSpeed(speed));
+m4.setSpeedBrushless(speed);
 m4.go()
 
 time.sleep(10)
