@@ -55,7 +55,7 @@ m2.go()
 m3.setSpeed(speed);
 m3.go()
 
-m4.setSpeed(speed(1));
+m4.setSpeed(speed);
 m4.go()
 
 #####
