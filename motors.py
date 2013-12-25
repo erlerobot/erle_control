@@ -9,7 +9,8 @@
 @author: Víctor Mayoral Vilches <victor@erlerobot.com>
 @description: Interface with the DC motors.
 '''
-import Adafruit_BBIO.PWM as PWM    
+import Adafruit_BBIO.PWM as PWM
+import time    
 """
 This class is assuming that last version of Adafruit_BBIO 
 (https://github.com/adafruit/adafruit-beaglebone-io-python) been installed. 
@@ -30,7 +31,20 @@ class Motor:
         values in the (0,100).
         @note the hardware is installed in a way that the motors rotating direction is the one needed
         (e.g.: 1,3 CW and 2,4 CCW)
-    """ 
+    """
+
+    def initBrushlessMotor(self):
+        """
+            @brief Initial setup for ESCs
+
+            It seems they need to be put to 1 and put to 0 so that they can be operated.
+        """
+        PWM.set_duty_cycle(self.motor_pin, 20)
+        #maybe we should introduce a timer in here
+        time.sleep(0.5)
+        PWM.set_duty_cycle(self.motor_pin, 0)
+
+
     def __init__(self, motor_number=1, max_speed=100, min_speed=0):
         self.speed = 0;        
         # self.motor_pins_list = [["P9_14", "P9_16"], 
@@ -54,6 +68,7 @@ class Motor:
         # DC Brushless motors
         self.duty = 0
         PWM.start(self.motor_pin, self.duty, self.frequency)
+        self.initBrushlessMotor()
 
     def setSpeed(self, speed):
         """ @brief Set the duties according to the speed attribute for the DC Brushed motors
@@ -79,10 +94,9 @@ class Motor:
             raise Exception("Speed provided not in the [%s,%s] range!" % self.min_speed, self.max_speed)
 
 
-
-    """ update the motor PWM according to the class duty attributes
-    """
     def go(self):
+        """ @brief update the motor PWM according to the class duty attributes
+        """        
         # DC Brushed motors
         # PWM.set_duty_cycle(self.motor_pin[0],self.duty_IN1)
         # PWM.set_duty_cycle(self.motor_pin[1],self.duty_IN2)
