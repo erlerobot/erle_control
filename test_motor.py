@@ -45,20 +45,24 @@ m4 = Motor(4);
 m4.setSpeedBrushless(speed);
 m4.go()
 
-time.sleep(10)
+time.sleep(5)
+
+#####
+# shutdown the motors
+#####
 
 speed = 0
 
-m1.setSpeed(speed);
+m1.setSpeedBrushless(speed);
 m1.go()
 
-m2.setSpeed(speed);
+m2.setSpeedBrushless(speed);
 m2.go()
 
-m3.setSpeed(speed);
+m3.setSpeedBrushless(speed);
 m3.go()
 
-m4.setSpeed(speed);
+m4.setSpeedBrushless(speed);
 m4.go()
 
 #####

@@ -33,17 +33,6 @@ class Motor:
         (e.g.: 1,3 CW and 2,4 CCW)
     """
 
-    def initBrushlessMotor(self):
-        """
-            @brief Initial setup for ESCs
-
-            It seems they need to be put to 1 and put to 0 so that they can be operated.
-        """
-        PWM.set_duty_cycle(self.motor_pin, 20)
-        #maybe we should introduce a timer in here
-        time.sleep(0.5)
-        PWM.set_duty_cycle(self.motor_pin, 0)
-
 
     def __init__(self, motor_number=1, max_speed=100, min_speed=0):
         self.speed = 0;        
@@ -68,7 +57,6 @@ class Motor:
         # DC Brushless motors
         self.duty = 0
         PWM.start(self.motor_pin, self.duty, self.frequency)
-        self.initBrushlessMotor()
 
     def setSpeed(self, speed):
         """ @brief Set the duties according to the speed attribute for the DC Brushed motors
