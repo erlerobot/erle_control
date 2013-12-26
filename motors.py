@@ -51,7 +51,7 @@ class Motor:
         #                     ["P8_19", "P8_13"],
         #                     ["P9_22", "P9_21"],
         #                     ["P9_42", "P9_28"]]        
-        self.motor_pins_list = ["P9_14", "P9_16","P9_22", "P9_21"]
+        self.motor_pins_list = ["P9_14", "P9_21","P9_22", "P9_42"]
         if (motor_number > 4) or (motor_number < 1):
             raise Exception("Motor number provided out of bounds! ([1-4])")
         self.motor_number = motor_number # 1, 2, 3 or 4
