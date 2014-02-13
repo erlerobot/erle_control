@@ -7,6 +7,7 @@ from motors import Motor
 import Adafruit_BBIO.GPIO as GPIO
 import time
 import os
+import sys
 
 ###############################
 ##Configure GPIOs, necessary when using the DC Brushed motors
@@ -28,6 +29,9 @@ import os
 #time.sleep(10)
 
 speed = 10
+if len(sys.argv) > 1:
+	speed = int(sys.argv[1])
+
 
 m1 = Motor(1);
 m1.setSpeedBrushless(speed)
@@ -47,6 +51,7 @@ m4.go()
 
 time.sleep(5)
 
+
 #####
 # shutdown the motors
 #####
@@ -64,6 +69,7 @@ m3.go()
 
 m4.setSpeedBrushless(speed);
 m4.go()
+
 
 #####
 # Shut down the robot

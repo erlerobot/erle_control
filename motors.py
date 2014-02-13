@@ -40,13 +40,15 @@ class Motor:
         #                     ["P8_19", "P8_13"],
         #                     ["P9_22", "P9_21"],
         #                     ["P9_42", "P9_28"]]        
-        self.motor_pins_list = ["P9_14", "P9_21","P9_22", "P9_42"]
+        #self.motor_pins_list = ["P9_14", "P9_21","P9_22", "P9_42"]
+        self.motor_pins_list = ["P9_16", "P8_13","P9_21", "P9_28"]
         if (motor_number > 4) or (motor_number < 1):
             raise Exception("Motor number provided out of bounds! ([1-4])")
         self.motor_number = motor_number # 1, 2, 3 or 4
         self.max_speed= max_speed
         self.min_speed= min_speed
-        self.frequency = 2000
+        #self.frequency = 2000
+        self.frequency = 943
         self.motor_pin = self.motor_pins_list[self.motor_number - 1]
         #perform PWM initialization        
         # DC Brushed motors

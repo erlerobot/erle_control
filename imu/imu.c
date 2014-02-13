@@ -61,7 +61,7 @@ int read_mpudata_t(short* gyroX, short* gyroY, short* gyroZ, short* accelX, shor
 					short* magX, short* magY, short* magZ, unsigned long* magTimestamp, 
 					short* calibratedAccelX, short* calibratedAccelY, short* calibratedAccelZ,
 					short* calibratedMagX, short* calibratedMagY, short* calibratedMagZ,
-					float* quat1, float* quat2, float* quat3, float* quat4, 
+					float* fusedQuat1, float* fusedQuat2, float* fusedQuat3, float* fusedQuat4, 
 					float* fusedX, float* fusedY, float* fusedZ, float* lastDMPYaw, float* lastYaw);
 
 
@@ -451,15 +451,15 @@ void read_loop(unsigned int sample_rate)
 	printf("\n\n");
 }
 
-int read_rawGyro(short* rawGyro){
-	mpudata_t mpu;
-	memset(&mpu, 0, sizeof(mpudata_t));
-	if (mpu9150_read(&mpu) == 0) {
-		rawGyro = mpu.rawGyro;
-		return 0;
-	}
-	return -1;
-}
+//int read_rawGyro(short* rawGyro){
+//	mpudata_t mpu;
+//	memset(&mpu, 0, sizeof(mpudata_t));
+//	if (mpu9150_read(&mpu) == 0) {
+//		rawGyro = mpu.rawGyro;
+//		return 0;
+//	}
+//	return -1;
+//}
 
 void print_fused_euler_angles(mpudata_t *mpu)
 {

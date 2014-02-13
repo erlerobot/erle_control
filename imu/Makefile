@@ -3,7 +3,7 @@
 #
 
 CC = gcc
-CFLAGS = -Wall -fsingle-precision-constant -fPIC
+CFLAGS = -Wall -fsingle-precision-constant
 
 # add -DI2C_DEBUG for debugging
 DEFS = -DEMPL_TARGET_LINUX -DMPU9150 -DAK8975_SECONDARY
@@ -17,11 +17,10 @@ OBJS = inv_mpu.o \
        linux_glue.o \
        mpu9150.o \
        quaternion.o \
-       vector3d.o \
-       imu.o
+       vector3d.o
 
 
-all : libimu.so
+all : imu imucal
 
 
 imu : $(OBJS) imu.o
@@ -56,9 +55,6 @@ inv_mpu.o : $(EMPLDIR)/inv_mpu.c
 	$(CC) $(CFLAGS) $(DEFS) -I $(EMPLDIR) -I $(GLUEDIR) -c $(EMPLDIR)/inv_mpu.c
 
 
-libimu.so: $(OBJS)
-	$(CC) -shared -Wl,-soname,libimu.so $^ -o $@
-
 clean:
-	rm -f *.o *.so *.so* imu imucal
+	rm -f *.o imu imucal
 
