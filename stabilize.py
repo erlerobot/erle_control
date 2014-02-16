@@ -45,6 +45,11 @@ yawPID=PID()
 #xposPID=PID(.....)
 #yposPID=PID(.....)
 
+#init pitch, roll and yaw:
+roll = 0
+pitch = 0
+yaw = 0
+
 ############################
 #loop
 ############################

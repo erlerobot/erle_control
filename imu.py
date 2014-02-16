@@ -11,6 +11,7 @@
 '''
 from ctypes import *
 from time import clock
+from time import sleep
 
 # array class
 Vector3d_t = 3*c_float
@@ -92,27 +93,26 @@ class IMU:
     def read_fusedEuler(self, timing = 0):    
         if timing:
             start = clock()
-        while 1:
-                # DMP fused euler angles
-                fusedX = c_float(0)
-                fusedY = c_float(0)
-                fusedZ = c_float(0)
-                function = self.lib.read_fusedEuler
-                function.argtypes = [POINTER(c_float), POINTER(c_float), POINTER(c_float)]
-                res = function(byref(fusedX), byref(fusedY), byref(fusedZ)) 
-                
-                if timing:
-                    time_s = clock() - start
-                    print "before res:"+str(time_s)
 
-                print res
+        # DMP fused euler angles
+        fusedX = c_float(0)
+        fusedY = c_float(0)
+        fusedZ = c_float(0)
+        function = self.lib.read_fusedEuler
+        function.argtypes = [POINTER(c_float), POINTER(c_float), POINTER(c_float)]
+        while 1:
+                res = function(byref(fusedX), byref(fusedY), byref(fusedZ))                 
+                # if timing:
+                #     time_s = clock() - start
+                #     print "before res:"+str(time_s)
                 if res == 0:
                         if timing:
                             time_s = clock() - start
                             print time_s                                    
                         return fusedX.value, fusedY.value, fusedZ.value
 
-
+                # if the measurement is not ready yet, wait the sampling freq
+                sleep(1./self.sample_rate)
 
 
     """ Reads all the IMU sensor information and stores it into a Mpudata_t.
