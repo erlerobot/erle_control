@@ -18,11 +18,11 @@ from motors import Motor
 """ Limits the thrust passed to the motors
     in the range (-100,100)
 """
-def limitThrust(thrust):
-    if thrust > 100:
-        thrush = 100
-    elif thrust < -100:
-        thrust = -100
+def limitThrust(thrust, upperLimit = 100, lowerLimit = 0):
+    if thrust > upperLimit:
+        thrush = upperLimit
+    elif thrust < lowerLimit:
+        thrust = lowerLimit
     return thrust
 
 #instantiate IMU
@@ -109,13 +109,12 @@ while 1:
     motorPowerM4 =  limitThrust(thrust + roll + pitch - yaw);
     """
 
-    #QUAD_FORMATION_NORMAL first approach
-    # I'm assuming the motorPowers can be negative as well (angle in CCW)
+    #QUAD_FORMATION_NORMAL first approach    
     #TODO use the dynamical model equation to get the motor voltage
-    motorPowerM1 = limitThrust(thrust + pitch + yaw);
-    motorPowerM2 = limitThrust(thrust - roll - yaw);
-    motorPowerM3 =  limitThrust(thrust - pitch + yaw);
-    motorPowerM4 =  limitThrust(thrust + roll - yaw);
+    motorPowerM1 = limitThrust(thrust + pitch + yaw, 10);
+    motorPowerM2 = limitThrust(thrust - roll - yaw, 10);
+    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 10);
+    motorPowerM4 =  limitThrust(thrust + roll - yaw, 10);
 
     #Log the motor powers:
     print "------------------------"
