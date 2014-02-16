@@ -98,7 +98,7 @@ class IMU:
                 fusedY = c_float(0)
                 fusedZ = c_float(0)
                 function = self.lib.read_fusedEuler
-                function.argtypes = [POINTER(c_short), POINTER(c_short), POINTER(c_short)]
+                function.argtypes = [POINTER(c_float), POINTER(c_float), POINTER(c_float)]
                 res = function(byref(fusedX), byref(fusedY), byref(fusedZ)) 
                 if res == 0:
                         if timing:
