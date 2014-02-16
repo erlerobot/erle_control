@@ -55,24 +55,40 @@ class PID:
         self.Cd = 0
 
 
-    def update(self, error):
+    def update(self, error, debug = 0):
         """ Performs a PID computation and returns a control value based on
             the elapsed time (dt) and the error signal from a summing junction
             (the error parameter).
         """
+        if debug:
+            print "error:"+str(error)
+
         self.currtm = time.time()               # get t
         dt = self.currtm - self.prevtm          # get delta t
+        if debug:
+            print "dt:"+str(dt)
         de = error - self.prev_err              # get delta error
+        if debug:
+            print "de:"+str(de)
 
         self.Cp = self.Kp * error               # proportional term
+        if debug:
+            print "Proportional term (Cp):"+str(Cp)
         self.Ci += error * dt                   # integral term
+        if debug:
+            print "Integral term (Ci):"+str(Ci)
 
         self.Cd = 0
         if dt > 0:                              # no div by zero
             self.Cd = de/dt                     # derivative term
+            if debug:
+                print "Derivative term (Cd):"+str(Cd)
 
         self.prevtm = self.currtm               # save t for next pass
         self.prev_err = error                   # save t-1 error
 
         # sum the terms and return the result
-        return self.Cp + (self.Ki * self.Ci) + (self.Kd * self.Cd)
+        terms_sum = self.Cp + (self.Ki * self.Ci) + (self.Kd * self.Cd)
+        if debug:
+            print "Terms sum:"+str(terms_sum)        
+        return terms_sum

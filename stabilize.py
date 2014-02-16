@@ -65,9 +65,9 @@ while 1:
     #MyKalman.measure([roll,pitch, yaw])
     
     #Run the PIDs
-    roll = rollPID.update(roll - roll_m)
-    pitch = pitchPID.update(pitch - pitch_m)
-    yaw = yawPID.update(yaw - yaw_m)
+    roll = rollPID.update(roll - roll_m, 1)
+    pitch = pitchPID.update(pitch - pitch_m, 1)
+    yaw = yawPID.update(yaw - yaw_m, 1)
     #z = zPID.update(z - z_m)
     #xpos = xposPID.update(xpos - xpos_m)
     #ypos = yposPID.update(ypos - ypos_m)
