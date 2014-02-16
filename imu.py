@@ -112,7 +112,7 @@ class IMU:
                         return fusedX.value, fusedY.value, fusedZ.value
 
                 # if the measurement is not ready yet, wait the sampling freq
-                # sleep(1./self.sample_rate)
+                sleep(1./self.sample_rate)
 
 
     """ Reads all the IMU sensor information and stores it into a Mpudata_t.
