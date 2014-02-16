@@ -13,6 +13,7 @@ loop that adjust the 4 motors according to the IMU readings.
 
 from imu import IMU
 from motors import Motor
+from pid import PID
 
 """ Limits the thrust passed to the motors
     in the range (-100,100)
