@@ -12,7 +12,8 @@ EMPLDIR = eMPL
 GLUEDIR = glue
 MPUDIR = mpu9150
 
-OBJS = inv_mpu.o \
+OBJS = imu.o \
+	   inv_mpu.o \
        inv_mpu_dmp_motion_driver.o \
        linux_glue.o \
        mpu9150.o \

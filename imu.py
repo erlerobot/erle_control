@@ -55,11 +55,12 @@ class IMU:
         res = self.lib.mpu9150_init(self.i2c_bus, self.sample_rate, self.yaw_mix_factor)
         if res:
             Exception("Error when initializing the IMU!")
+        
         # set calibration files
         res = self.lib.set_cal(0, "./imu/accelcal.txt")
         if res != 0:
             Exception("Error while calibration: accelcal.txt")
-        res = self.lib.set_cal(0, "./imu/magcal.txt")
+        res = self.lib.set_cal(1, "./imu/magcal.txt")
         if res != 0:
             Exception("Error while calibration: magcal.txt")
 
