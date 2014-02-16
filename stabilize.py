@@ -14,6 +14,7 @@ loop that adjust the 4 motors according to the IMU readings.
 from imu import IMU
 from motors import Motor
 from pid import PID
+from time import sleep
 
 """ Limits the thrust passed to the motors
     in the range (-100,100)
@@ -78,14 +79,14 @@ while 1:
     #Log the values:
     print "------------------------"
     print "Measured angles:"
-    print "     pitch:" + pitch_m
-    print "     roll:" + roll_m
-    print "     yaw:" + yaw_m
+    print "     pitch:" + str(pitch_m)
+    print "     roll:" + str(roll_m)
+    print "     yaw:" + str(yaw_m)
     print "PID output angles:"
-    print "     pitch:" + pitch
-    print "     roll:" + roll
-    print "     yaw:" + yaw
-    print "thrust:" + thrust
+    print "     pitch:" + str(pitch)
+    print "     roll:" + str(roll)
+    print "     yaw:" + str(yaw)
+    print "thrust:" + str(thrust)
     
 
 
@@ -123,10 +124,10 @@ while 1:
 
     #Log the motor powers:
     print "------------------------"
-    print "motorPowerM1:" + motorPowerM1
-    print "motorPowerM2:" + motorPowerM2
-    print "motorPowerM3:" + motorPowerM3
-    print "motorPowerM4:" + motorPowerM4
+    print "motorPowerM1:" + str(motorPowerM1)
+    print "motorPowerM2:" + str(motorPowerM2)
+    print "motorPowerM3:" + str(motorPowerM3)
+    print "motorPowerM4:" + str(motorPowerM4)
     print "------------------------"
     
     #Set motor speeds
@@ -141,9 +142,10 @@ while 1:
     
     #Kalman Prediction
     #MyKalman.predict()
+
     #delay = 4e-3 #delay ms (250 Hz) 
-    delay = 20e-3 #delay ms (50 Hz)
-    time.sleep(delay)
+    # delay = 20e-3 #delay ms (50 Hz)
+    # time.sleep(delay)
 
 ############################
 ############################
