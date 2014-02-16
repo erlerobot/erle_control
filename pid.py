@@ -20,9 +20,9 @@ class PID:
     """
     def __init__(self):
         # initialze gains
-        self.Kp = 0
-        self.Kd = 0
-        self.Ki = 0
+        self.Kp = 1
+        self.Kd = 1
+        self.Ki = 1
 
         self.Initialize()
 
@@ -73,16 +73,16 @@ class PID:
 
         self.Cp = self.Kp * error               # proportional term
         if debug:
-            print "Proportional term (Cp):"+str(Cp)
+            print "Proportional term (Cp):"+str(self.Cp)
         self.Ci += error * dt                   # integral term
         if debug:
-            print "Integral term (Ci):"+str(Ci)
+            print "Integral term (Ci):"+str(self.Ci)
 
         self.Cd = 0
         if dt > 0:                              # no div by zero
             self.Cd = de/dt                     # derivative term
             if debug:
-                print "Derivative term (Cd):"+str(Cd)
+                print "Derivative term (Cd):"+str(self.Cd)
 
         self.prevtm = self.currtm               # save t for next pass
         self.prev_err = error                   # save t-1 error
@@ -90,5 +90,5 @@ class PID:
         # sum the terms and return the result
         terms_sum = self.Cp + (self.Ki * self.Ci) + (self.Kd * self.Cd)
         if debug:
-            print "Terms sum:"+str(terms_sum)        
+            print "Terms sum (self.Cp + (self.Ki * self.Ci) + (self.Kd * self.Cd)):"+str(terms_sum)        
         return terms_sum
