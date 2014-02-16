@@ -12,7 +12,6 @@ loop that adjust the 4 motors according to the IMU readings.
 '''
 
 from imu import IMU
-from sensor_class import Sensor
 from motors import Motor
 
 """ Limits the thrust passed to the motors
