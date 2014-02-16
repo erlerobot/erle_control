@@ -10,7 +10,7 @@
 @description: python interface with the IMU
 '''
 from ctypes import *
-#from time import clock
+from time import clock
 
 # array class
 Vector3d_t = 3*c_float
