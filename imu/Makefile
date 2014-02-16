@@ -3,7 +3,7 @@
 #
 
 CC = gcc
-CFLAGS = -Wall -fsingle-precision-constant
+CFLAGS = -Wall -fsingle-precision-constant -fPIC
 
 # add -DI2C_DEBUG for debugging
 DEFS = -DEMPL_TARGET_LINUX -DMPU9150 -DAK8975_SECONDARY
@@ -12,7 +12,8 @@ EMPLDIR = eMPL
 GLUEDIR = glue
 MPUDIR = mpu9150
 
-OBJS = inv_mpu.o \
+OBJS = imu.o \
+	   inv_mpu.o \
        inv_mpu_dmp_motion_driver.o \
        linux_glue.o \
        mpu9150.o \
@@ -20,7 +21,7 @@ OBJS = inv_mpu.o \
        vector3d.o
 
 
-all : imu imucal
+all : libimu.so
 
 
 imu : $(OBJS) imu.o
@@ -55,6 +56,9 @@ inv_mpu.o : $(EMPLDIR)/inv_mpu.c
 	$(CC) $(CFLAGS) $(DEFS) -I $(EMPLDIR) -I $(GLUEDIR) -c $(EMPLDIR)/inv_mpu.c
 
 
+libimu.so: $(OBJS)
+	$(CC) -shared -Wl,-soname,libimu.so $^ -o $@
+
 clean:
-	rm -f *.o imu imucal
+	rm -f *.o *.so *.so* imu imucal
 
