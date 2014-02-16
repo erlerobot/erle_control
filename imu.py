@@ -99,12 +99,12 @@ class IMU:
                 fusedZ = c_float(0)
                 function = self.lib.read_fusedEuler
                 function.argtypes = [POINTER(c_short), POINTER(c_short), POINTER(c_short)]
-                res = function(byref(x), byref(y), byref(z)) 
+                res = function(byref(fusedX), byref(fusedY), byref(fusedZ)) 
                 if res == 0:
                         if timing:
                             time_s = clock() - start
                             print time_s
-                        return x.value, y.value, z.value
+                        return fusedX.value, fusedY.value, fusedZ.value
 
 
 
