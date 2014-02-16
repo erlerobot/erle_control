@@ -188,7 +188,7 @@ class IMU:
                         # Construct an instance of Mpudata_t
                         mpudata_t = Mpudata_t(rawGyro = (c_short*3)(*[gyroX.value, gyroY.value, gyroZ.value]),
                                                 rawAccel = (c_short*3)(*[accelX.value, accelY.value, accelZ.value]),
-                                                rawQuat = (c_long*3)(*[quat1.value, quat2.value, quat3.value,, quat4.value]),
+                                                rawQuat = (c_long*3)(*[quat1.value, quat2.value, quat3.value,quat4.value]),
                                                 dmpTimestamp = (c_ulong)(dmpTimestamp.value),
                                                 rawMag = (c_short*3)(*[magX.value, magY.value, magZ.value]),
                                                 magTimestamp = (c_ulong)(magTimestamp.value),
@@ -197,7 +197,7 @@ class IMU:
                                                 fusedQuat = (c_float*4)(*[fusedQuat1.value, fusedQuat2.value, fusedQuat3.value, fusedQuat4.value]),
                                                 fusedEuler = (c_float*3)(*[fusedX.value, fusedY.value, fusedZ.value]),
                                                 lastDMPYaw = (c_float)(lastDMPYaw),
-                                                lastDMPYaw = (c_float)(lastYaw)
+                                                lastYaw = (c_float)(lastYaw)
 
                                             )                            
                         return mpudata_t

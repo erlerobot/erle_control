@@ -11,7 +11,7 @@
 loop that adjust the 4 motors according to the IMU readings.
 '''
 
-from imu_class import IMU
+from imu import IMU
 from sensor_class import Sensor
 from motors import Motor
 
