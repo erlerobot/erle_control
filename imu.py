@@ -100,10 +100,16 @@ class IMU:
                 function = self.lib.read_fusedEuler
                 function.argtypes = [POINTER(c_float), POINTER(c_float), POINTER(c_float)]
                 res = function(byref(fusedX), byref(fusedY), byref(fusedZ)) 
+                
+                if timing:
+                    time_s = clock() - start
+                    print "before res:"+str(time_s)
+
+                print res
                 if res == 0:
                         if timing:
                             time_s = clock() - start
-                            print time_s
+                            print time_s                                    
                         return fusedX.value, fusedY.value, fusedZ.value
 
 
