@@ -33,7 +33,7 @@ imu=IMU()
 motor1=Motor(1)
 motor2=Motor(2)
 motor3=Motor(3)
-motor4-Motor(4)
+motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
 #TODO instantiate PID controllers
