@@ -20,9 +20,9 @@ class PID:
     """
     def __init__(self):
         # initialze gains
-        self.Kp = 1
-        self.Kd = 1
-        self.Ki = 1
+        self.Kp = 100
+        self.Kd = 0
+        self.Ki = 0
 
         self.Initialize()
 
