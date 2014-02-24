@@ -49,7 +49,11 @@ m4 = Motor(4);
 m4.setSpeedBrushless(speed);
 m4.go()
 
-time.sleep(5)
+sleep_time = 5
+if len(sys.argv) > 2:
+	sleep_time = int(sys.argv[2])
+
+time.sleep(sleep_time)
 
 
 #####
