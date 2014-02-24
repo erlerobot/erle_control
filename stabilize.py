@@ -21,7 +21,7 @@ from time import sleep
 """
 def limitThrust(thrust, upperLimit = 100, lowerLimit = 0):
     if thrust > upperLimit:
-        thrush = upperLimit
+        thrust = upperLimit
     elif thrust < lowerLimit:
         thrust = lowerLimit
     return thrust
