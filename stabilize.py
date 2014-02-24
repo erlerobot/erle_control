@@ -51,13 +51,13 @@ roll = 0
 pitch = 0
 yaw = 0
 
+print "------------------------"
+print "     stabilize loop     "
+print "------------------------"
 ############################
 #loop
 ############################
 while 1:
-    print "------------------------"
-    print "     stabilize loop     "
-    print "------------------------"
 
     # pitch, roll and yaw DESIRED:
     #  FOR NOW THEY ARE KEPT TO 0 BUT THIS INFORMATION SHOULD
@@ -81,10 +81,11 @@ while 1:
 
     #TODO change this parameter and see the behaviour
     #thrust is provided by the controller (NOTE: this is also treated as "z" and it should use the zPID controller)
+    # the point of hovering is 35% duty cycle in the motors
     thrust = 0
 
     #Log the values:
-    print "------------------------"
+    print "**************************"
     print "Measured angles:"
     print "     pitch:" + str(pitch_m)
     print "     roll:" + str(roll_m)
@@ -124,10 +125,10 @@ while 1:
 
     #QUAD_FORMATION_NORMAL first approach    
     #TODO use the dynamical model equation to get the motor voltage
-    motorPowerM1 = limitThrust(thrust + pitch + yaw, 100);
-    motorPowerM2 = limitThrust(thrust - roll - yaw, 100);
-    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 100);
-    motorPowerM4 =  limitThrust(thrust + roll - yaw, 100);
+    motorPowerM1 = limitThrust(thrust + pitch + yaw, 30);
+    motorPowerM2 = limitThrust(thrust - roll - yaw, 30);
+    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 30);
+    motorPowerM4 =  limitThrust(thrust + roll - yaw, 30);
 
     #Log the motor powers:
     print "------------------------"
@@ -135,7 +136,7 @@ while 1:
     print "motorPowerM2:" + str(motorPowerM2)
     print "motorPowerM3:" + str(motorPowerM3)
     print "motorPowerM4:" + str(motorPowerM4)
-    print "------------------------"
+    print "**************************"
     
     #Set motor speeds
     motor1.setSpeed(motorPowerM1)
