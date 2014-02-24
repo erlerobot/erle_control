@@ -68,13 +68,13 @@ while 1:
     
     #Measure angles    
     #roll_m, pitch_m, yaw_m = imu.read_fusedEuler()
-    roll_m, pitch_m, yaw_m = imu.read_fusedEuler(1)
+    roll_m, pitch_m, yaw_m = imu.read_fusedEuler(0)
     #MyKalman.measure([roll,pitch, yaw])
     
     #Run the PIDs
-    roll = rollPID.update(roll_m - roll, 1) # measured minus desired (error)
-    pitch = pitchPID.update(pitch_m - pitch, 1)
-    yaw = yawPID.update(yaw_m - yaw, 1)
+    roll = rollPID.update(roll_m - roll, 0) # measured minus desired (error)
+    pitch = pitchPID.update(pitch_m - pitch, 0)
+    yaw = yawPID.update(yaw_m - yaw, 0)
     #z = zPID.update(z_m - z)
     #xpos = xposPID.update(xpos_m - xpos)
     #ypos = yposPID.update(ypos_m - ypos)
