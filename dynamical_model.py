@@ -35,7 +35,7 @@ class Dynamical_Model:
         self.Omega_H = math.sqrt(self.W_prop/self.b) # propeller speed at hover
 
         # propellers
-        self.N = 2 # Number of blades per propeller
+        self.N = 3 # Number of blades per propeller
         self.R = 32.5e-3 # Propeller radius [m]
         self.A = math.pi*math.pow(self.R, 2)# Propeller disk area [m^2]
         self.c = 0.0394 # Chord [m]
@@ -83,7 +83,7 @@ class Dynamical_Model:
     """
     def motor_inversion(thrust, roll, pitch, yaw):
         # the control inputs
-        U = np.array( ((thrush, roll, pitch, yaw)) )
+        U = np.array( ((thrust, roll, pitch, yaw)) )
         # the motor voltages
         u = self.k_m * self.tau ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.pow(self.r,3)*self.J_t))*np.sqrt(np.dot(self.m,U))- self.d*np.pow(self.Omega_0,3)/(self.eta*np.pow(self.r,3)*self.J_t))
         return u

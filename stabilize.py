@@ -72,9 +72,9 @@ while 1:
     #MyKalman.measure([roll,pitch, yaw])
     
     #Run the PIDs
-    roll = rollPID.update(roll_m - roll, 0) # measured minus desired (error)
-    pitch = pitchPID.update(pitch_m - pitch, 0)
-    yaw = yawPID.update(yaw_m - yaw, 0)
+    roll = rollPID.update(roll - roll_m, 0)
+    pitch = pitchPID.update(pitch - pitch_m, 0)
+    yaw = yawPID.update(yaw - yaw_m, 0)
     #z = zPID.update(z_m - z)
     #xpos = xposPID.update(xpos_m - xpos)
     #ypos = yposPID.update(ypos_m - ypos)
@@ -97,32 +97,6 @@ while 1:
     print "thrust:" + str(thrust)
     
 
-
-    """ When using the dynamical model with u:
-
-    #Update the control inputs "u"
-    u = updateU(roll, pitch, yaw)
-    #u = updateU(roll, pitch, yaw, z, xpos, ypos)
-    
-    #Set motor speeds
-    motor1.setSpeed(u)
-    motor2.setSpeed(u)
-    motor3.setSpeed(u)
-    motor4.setSpeed(u)
-
-    """
-
-
-    """
-    #QUAD_FORMATION_X
-    roll = roll >> 1;
-    pitch = pitch >> 1;
-    motorPowerM1 = limitThrust(thrust - roll + pitch + yaw);
-    motorPowerM2 = limitThrust(thrust - roll - pitch - yaw);
-    motorPowerM3 =  limitThrust(thrust + roll - pitch + yaw);
-    motorPowerM4 =  limitThrust(thrust + roll + pitch - yaw);
-    """
-
     #QUAD_FORMATION_NORMAL first approach    
     #TODO use the dynamical model equation to get the motor voltage
     motorPowerM1 = limitThrust(thrust + pitch + yaw, 30);
@@ -139,10 +113,10 @@ while 1:
     print "**************************"
     
     #Set motor speeds
-    motor1.setSpeed(motorPowerM1)
-    motor2.setSpeed(motorPowerM2)
-    motor3.setSpeed(motorPowerM3)
-    motor4.setSpeed(motorPowerM4)
+    motor1.setSpeedBrushless(motorPowerM1)
+    motor2.setSpeedBrushless(motorPowerM2)
+    motor3.setSpeedBrushless(motorPowerM3)
+    motor4.setSpeedBrushless(motorPowerM4)
     
     #Start Motors
     for mot in motors:
