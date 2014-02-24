@@ -1,3 +1,16 @@
+#!/usr/bin/env python
+# -*- encoding: utf-8 -*-
+'''
+                                          
+ _____     _        _____     _       _   
+|   __|___| |___   | __  |___| |_ ___| |_ 
+|   __|  _| | -_|  |    -| . | . | . |  _|
+|_____|_| |_|___|  |__|__|___|___|___|_|  
+                                          
+@author: Víctor Mayoral Vilches <victor@erlerobot.com>
+@description: Set motor speeds to 0
+'''	
+
 from motors import Motor
 import Adafruit_BBIO.GPIO as GPIO
 import time

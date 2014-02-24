@@ -85,7 +85,8 @@ class Dynamical_Model:
         # the control inputs
         U = np.array( ((thrust, roll, pitch, yaw)) )
         # the motor voltages
-        u = self.k_m * self.tau ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.pow(self.r,3)*self.J_t))*np.sqrt(np.dot(self.m,U))- self.d*np.pow(self.Omega_0,3)/(self.eta*np.pow(self.r,3)*self.J_t))
+        u = self.k_m * self.tau ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.pow(self.r,3)*self.J_t))\
+            *np.sqrt(np.dot(self.m,U))- self.d*np.pow(self.Omega_0,3)/(self.eta*np.pow(self.r,3)*self.J_t))
         return u
 
 

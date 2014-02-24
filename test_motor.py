@@ -1,8 +1,20 @@
 #!/usr/bin/env python
-"""
-	@brief Test the motors behaviour
-	
-"""
+# -*- encoding: utf-8 -*-
+'''
+                                          
+ _____     _        _____     _       _   
+|   __|___| |___   | __  |___| |_ ___| |_ 
+|   __|  _| | -_|  |    -| . | . | . |  _|
+|_____|_| |_|___|  |__|__|___|___|___|_|  
+                                          
+@author: Víctor Mayoral Vilches <victor@erlerobot.com>
+@description: Interface with the DC motors.
+@brief Test the motors behaviour
+
+The call to this method is:
+     python text_motor.py [speed] [time]
+'''
+
 from motors import Motor
 import Adafruit_BBIO.GPIO as GPIO
 import time

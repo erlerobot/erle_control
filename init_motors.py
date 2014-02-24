@@ -1,9 +1,17 @@
 #!/usr/bin/env python
-"""
-	@brief It seems the brushless motors need the duty
-		cycle to change to get ready for operation.
-	
-"""
+# -*- encoding: utf-8 -*-
+'''
+                                          
+ _____     _        _____     _       _   
+|   __|___| |___   | __  |___| |_ ___| |_ 
+|   __|  _| | -_|  |    -| . | . | . |  _|
+|_____|_| |_|___|  |__|__|___|___|___|_|  
+                                          
+@author: Víctor Mayoral Vilches <victor@erlerobot.com>
+@description: ESC initialization
+@brief init the ESCs. Tested with SiLabs ESCs
+'''	
+
 from motors import Motor
 import Adafruit_BBIO.GPIO as GPIO
 import time
