@@ -58,19 +58,26 @@ while 1:
     print "------------------------"
     print "     stabilize loop     "
     print "------------------------"
-    #TODO complete call
+
+    # pitch, roll and yaw DESIRED:
+    #  FOR NOW THEY ARE KEPT TO 0 BUT THIS INFORMATION SHOULD
+    #  COME FROM THE TELEOPERATION DEVICE/MISSION SYSTEM
+    roll = 0
+    pitch = 0
+    yaw = 0
+    
     #Measure angles    
     #roll_m, pitch_m, yaw_m = imu.read_fusedEuler()
     roll_m, pitch_m, yaw_m = imu.read_fusedEuler(1)
     #MyKalman.measure([roll,pitch, yaw])
     
     #Run the PIDs
-    roll = rollPID.update(roll - roll_m, 1)
-    pitch = pitchPID.update(pitch - pitch_m, 1)
-    yaw = yawPID.update(yaw - yaw_m, 1)
-    #z = zPID.update(z - z_m)
-    #xpos = xposPID.update(xpos - xpos_m)
-    #ypos = yposPID.update(ypos - ypos_m)
+    roll = rollPID.update(roll_m - roll, 1) # measured minus desired (error)
+    pitch = pitchPID.update(pitch_m - pitch, 1)
+    yaw = yawPID.update(yaw_m - yaw, 1)
+    #z = zPID.update(z_m - z)
+    #xpos = xposPID.update(xpos_m - xpos)
+    #ypos = yposPID.update(ypos_m - ypos)
 
     #TODO change this parameter and see the behaviour
     #thrust is provided by the controller (NOTE: this is also treated as "z" and it should use the zPID controller)
@@ -117,10 +124,10 @@ while 1:
 
     #QUAD_FORMATION_NORMAL first approach    
     #TODO use the dynamical model equation to get the motor voltage
-    motorPowerM1 = limitThrust(thrust + pitch + yaw, 10);
-    motorPowerM2 = limitThrust(thrust - roll - yaw, 10);
-    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 10);
-    motorPowerM4 =  limitThrust(thrust + roll - yaw, 10);
+    motorPowerM1 = limitThrust(thrust + pitch + yaw, 100);
+    motorPowerM2 = limitThrust(thrust - roll - yaw, 100);
+    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 100);
+    motorPowerM4 =  limitThrust(thrust + roll - yaw, 100);
 
     #Log the motor powers:
     print "------------------------"
