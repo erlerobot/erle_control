@@ -20,7 +20,7 @@ class PID:
     """
     def __init__(self):
         # initialze gains
-        self.Kp = 100
+        self.Kp = 1
         self.Kd = 0
         self.Ki = 0
 
@@ -61,34 +61,38 @@ class PID:
             (the error parameter).
         """
         if debug:
-            print "error:"+str(error)
+            print "   ****************************"
+            print "   PID Debug"
+            print "   ****************************"
+            print "   error:"+str(error)
 
         self.currtm = time.time()               # get t
         dt = self.currtm - self.prevtm          # get delta t
         if debug:
-            print "dt:"+str(dt)
+            print "   dt:"+str(dt)
         de = error - self.prev_err              # get delta error
         if debug:
-            print "de:"+str(de)
+            print "   de:"+str(de)
 
-        self.Cp = self.Kp * error               # proportional term
+        self.Cp = error               # proportional term
         if debug:
-            print "Proportional term (Cp):"+str(self.Cp)
+            print "   Proportional term (Cp*Kp):"+str(self.Cp)
         self.Ci += error * dt                   # integral term
         if debug:
-            print "Integral term (Ci):"+str(self.Ci)
+            print "   Integral term (Ci*Ki):"+str(self.Ci * self.Ki)
 
         self.Cd = 0
         if dt > 0:                              # no div by zero
             self.Cd = de/dt                     # derivative term
             if debug:
-                print "Derivative term (Cd):"+str(self.Cd)
+                print "   Derivative term (Cd*Kd):"+str(self.Cd * self.Kd)
 
         self.prevtm = self.currtm               # save t for next pass
         self.prev_err = error                   # save t-1 error
 
         # sum the terms and return the result
-        terms_sum = self.Cp + (self.Ki * self.Ci) + (self.Kd * self.Cd)
+        terms_sum = self.Cp * self.Kp  + (self.Ki * self.Ci) + (self.Kd * self.Cd)
         if debug:
-            print "Terms sum (self.Cp + (self.Ki * self.Ci) + (self.Kd * self.Cd)):"+str(terms_sum)        
+            print "   Terms sum (self.Cp + (self.Ki * self.Ci) + (self.Kd * self.Cd)):"+str(terms_sum)        
+            print "   ****************************"
         return terms_sum
