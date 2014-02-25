@@ -46,7 +46,7 @@ class IMU:
     def __init__(self):
         #TODO Set I2C interface, make sure that calibrations files are available and make some readings
         # through ctypes.
-        self.lib = CDLL("./imu/libimu.so")
+        self.lib = CDLL("/root/erle_control/imu/libimu.so")
         self.i2c_bus = 2
         self.lib.mpu9150_set_debug(0) # 1
         self.sample_rate = 50 # 50 Hz
