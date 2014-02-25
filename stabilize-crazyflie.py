@@ -17,7 +17,6 @@ from imu import IMU
 from motors import Motor
 from pid import PID
 from time import sleep
-from time import clock
 
 """ Limits the thrust passed to the motors
     in the range (-100,100)
@@ -42,12 +41,9 @@ motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
 # instantiate PID controllers and init them
-rollPID=PID()
-rollPID.Initialize()
-pitchPID=PID()
-pitchPID.Initialize()
-yawPID=PID()
-yawPID.Initialize()
+rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
+pitchPID=PID(0.9, 0.2, 0.3)
+yawPID=PID(0.06, 0.02, 0.01)
 #zPID=PID(.....)
 #xposPID=PID(.....)
 #yposPID=PID(.....)
@@ -64,8 +60,6 @@ print "------------------------"
 #loop
 ############################
 while 1:    
-    start = clock()
-
 
     # pitch, roll and yaw DESIRED:
     #  FOR NOW THEY ARE KEPT TO 0 BUT THIS INFORMATION SHOULD
@@ -105,12 +99,11 @@ while 1:
     print "thrust:" + str(thrust)
     
 
-    #QUAD_FORMATION_NORMAL first approach    
-    #TODO use the dynamical model equation to get the motor voltage
-    motorPowerM1 = limitThrust(thrust + pitch + yaw, 30);
-    motorPowerM2 = limitThrust(thrust - roll - yaw, 30);
-    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 30);
-    motorPowerM4 =  limitThrust(thrust + roll - yaw, 30);
+    #QUAD_FORMATION_NORMAL first approach        
+    motorPowerM1 = limitThrust(thrust + pitch + yaw, 40);
+    motorPowerM2 = limitThrust(thrust - roll - yaw, 40);
+    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 40);
+    motorPowerM4 =  limitThrust(thrust + roll - yaw, 40);
 
     #Log the motor powers:
     print "------------------------"

@@ -19,7 +19,8 @@ from imu import IMU
 from motors import Motor
 from pid import PID
 from time import sleep
-from time import clock
+import datetime as dt
+from dynamical_model import Dynamical_Model
 
 
 """ Limits the thrust passed to the motors
@@ -32,10 +33,21 @@ def limitThrust(thrust, upperLimit = 100, lowerLimit = 0):
         thrust = lowerLimit
     return thrust
 
+############################
+# logging variables
+############################
+
+logging = 1
+logging_time = 1
+############################
+
 #instantiate IMU
 #TODO see how to import C interface to python
 imu=IMU() 
 #MyKalman=KalmanFilter(....)
+
+# dynamical model instance
+dyn_model = Dynamical_Model()
 
 #instantiate motors and put them together in a list
 motor1=Motor(1)
@@ -44,25 +56,24 @@ motor3=Motor(3)
 motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
-#TODO instantiate PID controllers
-rollPID=PID()
-rollPID.Initialize()
-pitchPID=PID()
-pitchPID.Initialize()
-yawPID=PID()
-yawPID.Initialize()
-#zPID=PID(.....)
-#xposPID=PID(.....)
-#yposPID=PID(.....)
+# instantiate PID controllers
+rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
+pitchPID=PID(0.9, 0.2, 0.3)
+yawPID=PID(0.06, 0.02, 0.01)
+#zPID=PID(8, 10, 5)
+#xposPID=PID(-0.09, -0.1, 0)
+#yposPID=PID(-0.09, -0.1, 0)
 
-print "------------------------"
-print "     stabilize loop     "
-print "------------------------"
+frequencies = []
+if logging:
+    print "------------------------"
+    print "     stabilize loop     "
+    print "------------------------"
 ############################
 #loop
 ############################
 while 1:
-    start = clock()
+    start = dt.datetime.now()
 
     # pitch, roll and yaw DESIRED:
     #  FOR NOW THEY ARE KEPT TO 0 BUT THIS INFORMATION SHOULD
@@ -70,6 +81,9 @@ while 1:
     roll_d = 0
     pitch_d = 0
     yaw_d = 0
+    #z_d = 0
+    #xpos = 0
+    #ypos = 0
     
     #Measure angles    s
     #roll_m, pitch_m, yaw_m = imu.read_fusedEuler()
@@ -80,52 +94,69 @@ while 1:
     roll = rollPID.update(roll_d - roll_m, 0)
     pitch = pitchPID.update(pitch_d - pitch_m, 0)
     yaw = yawPID.update(yaw_d - yaw_m, 0)
-    #z = zPID.update(z_m - z)
-    #xpos = xposPID.update(xpos_m - xpos)
-    #ypos = yposPID.update(ypos_m - ypos)
+    #z = zPID.update(z_d - z_m)
+    #xpos = xposPID.update(xpos_d - xpos_m)
+    #ypos = yposPID.update(ypos_d - ypos_m)
 
     #TODO change this parameter and see the behaviour
     #thrust is provided by the controller (NOTE: this is also treated as "z" and it should use the zPID controller)
     # the point of hovering is 35% duty cycle in the motors
-    thrust = 0
+    thrust = 1
 
-    #Log the values:
-    print "**************************"
-    print "Desired angles:"
-    print "     pitch:" + str(pitch_d)
-    print "     roll:" + str(roll_d)
-    print "     yaw:" + str(yaw_d)    
-    print "Measured angles:"
-    print "     pitch:" + str(pitch_m)
-    print "     roll:" + str(roll_m)
-    print "     yaw:" + str(yaw_m)
-    print "PID output angles:"
-    print "     pitch:" + str(pitch)
-    print "     roll:" + str(roll)
-    print "     yaw:" + str(yaw)
-    print "thrust:" + str(thrust)
+    if logging:
+        #Log the values:
+        print "**************************"
+        print "Desired angles:"
+        print "     pitch:" + str(pitch_d)
+        print "     roll:" + str(roll_d)
+        print "     yaw:" + str(yaw_d)    
+        print "Measured angles:"
+        print "     pitch:" + str(pitch_m)
+        print "     roll:" + str(roll_m)
+        print "     yaw:" + str(yaw_m)
+        print "PID output angles:"
+        print "     pitch:" + str(pitch)
+        print "     roll:" + str(roll)
+        print "     yaw:" + str(yaw)
+        print "thrust:" + str(thrust)
     
 
-    #QUAD_FORMATION_NORMAL first approach    
-    #TODO use the dynamical model equation to get the motor voltage
-    motorPowerM1 = limitThrust(thrust + pitch + yaw, 100);
-    motorPowerM2 = limitThrust(thrust - roll - yaw, 100);
-    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 100);
-    motorPowerM4 =  limitThrust(thrust + roll - yaw, 100);
+    # use the dynamical_model, returns u=[u_m1, u_m2, u_m3, u_m3]
+    u = dyn_model.motor_inversion(thrust, roll, pitch, yaw)
 
-    #Log the motor powers:
-    print "------------------------"
-    print "motorPowerM1:" + str(motorPowerM1)
-    print "motorPowerM2:" + str(motorPowerM2)
-    print "motorPowerM3:" + str(motorPowerM3)
-    print "motorPowerM4:" + str(motorPowerM4)
-    print "**************************"
+    if logging:
+        #Log the motor powers:
+        print "------------------------"
+        print "u1 (motor1):" + str(u[0])
+        print "u2 (motor2):" + str(u[1])
+        print "u3 (motor3):" + str(u[2])
+        print "u4 (motor4):" + str(u[3])
+        print "**************************"
+
+    """
+    #QUAD_FORMATION_NORMAL first approach        
+    motorPowerM1 = limitThrust(thrust + pitch + yaw, 40);
+    motorPowerM2 = limitThrust(thrust - roll - yaw, 40);
+    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 40);
+    motorPowerM4 =  limitThrust(thrust + roll - yaw, 40);
+
+    if logging:
+        #Log the motor powers:
+        print "------------------------"
+        print "motorPowerM1:" + str(motorPowerM1)
+        print "motorPowerM2:" + str(motorPowerM2)
+        print "motorPowerM3:" + str(motorPowerM3)
+        print "motorPowerM4:" + str(motorPowerM4)
+        print "**************************"
+    """
+
+
     
     #Set motor speeds
-    motor1.setSpeedBrushless(motorPowerM1)
-    motor2.setSpeedBrushless(motorPowerM2)
-    motor3.setSpeedBrushless(motorPowerM3)
-    motor4.setSpeedBrushless(motorPowerM4)
+    motor1.setSpeedBrushless(u[0])
+    motor2.setSpeedBrushless(u[1])
+    motor3.setSpeedBrushless(u[2])
+    motor4.setSpeedBrushless(u[3])
     
     #Start Motors
     for mot in motors:
@@ -136,11 +167,28 @@ while 1:
 
     #delay = 4e-3 #delay ms (250 Hz) 
     # delay = 20e-3 #delay ms (50 Hz)
-    # time.sleep(delay)
+    # sleep(delay)
 
-    time_s = clock() - start
-    frequency = 1./time_s
-    print "frequency (Hz): "+str(frequency)
+    # calculate the time each iteration takes
+    time_u = (dt.datetime.now() - start).microseconds
+
+    # if frequency > 50:
+    #     sleep(20e-3 - time_u/1e6)
+
+    if logging_time:
+        print "time (s): "+str(time_u/1e6)
+    frequency = 1e6/time_u
+    if logging_time:
+        print "frequency (Hz): "+str(frequency)
+
+    # average frequency of the loop
+    frequencies.append(frequency)
+    sum = 0
+    for f in frequencies:
+        sum+=f
+    if logging_time:
+        print "average frequency (Hz): "+str(sum/len(frequencies))
+
 
 ############################
 ############################

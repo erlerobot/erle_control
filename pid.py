@@ -18,11 +18,11 @@ class PID:
         instantiated all the gain variables are set to zero, so calling
         the method GenOut will just return zero.
     """
-    def __init__(self):
+    def __init__(self, Kp = 1, Kd = 0, Ki = 0):
         # initialze gains
-        self.Kp = 1
-        self.Kd = 0
-        self.Ki = 0
+        self.Kp = Kp
+        self.Kd = Kd
+        self.Ki = Ki
 
         self.Initialize()
 
