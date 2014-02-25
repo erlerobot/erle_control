@@ -8,9 +8,11 @@
                                           
 @author: Víctor Mayoral Vilches <victor@erlerobot.com>
 @description: Code for stabilizing the quadrotor. It runs and infinite
-loop that adjust the 4 motors according to the IMU readings. Based on the crazyflie code.
+loop that adjust the 4 motors according to the IMU readings.
 
-The performance is not good
+This code is implementing the control strategy desribed by Menno Wierema
+in his MS thesis: "Design, implementation and flight test of indoor navigation and control
+for a quadrotor UAV"
 '''
 
 from imu import IMU
@@ -18,6 +20,7 @@ from motors import Motor
 from pid import PID
 from time import sleep
 from time import clock
+
 
 """ Limits the thrust passed to the motors
     in the range (-100,100)
@@ -41,7 +44,7 @@ motor3=Motor(3)
 motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
-# instantiate PID controllers and init them
+#TODO instantiate PID controllers
 rollPID=PID()
 rollPID.Initialize()
 pitchPID=PID()
@@ -52,37 +55,31 @@ yawPID.Initialize()
 #xposPID=PID(.....)
 #yposPID=PID(.....)
 
-#init pitch, roll and yaw:
-roll = 0
-pitch = 0
-yaw = 0
-
 print "------------------------"
 print "     stabilize loop     "
 print "------------------------"
 ############################
 #loop
 ############################
-while 1:    
+while 1:
     start = clock()
-
 
     # pitch, roll and yaw DESIRED:
     #  FOR NOW THEY ARE KEPT TO 0 BUT THIS INFORMATION SHOULD
     #  COME FROM THE TELEOPERATION DEVICE/MISSION SYSTEM
-    roll = 0
-    pitch = 0
-    yaw = 0
+    roll_d = 0
+    pitch_d = 0
+    yaw_d = 0
     
-    #Measure angles    
+    #Measure angles    s
     #roll_m, pitch_m, yaw_m = imu.read_fusedEuler()
     roll_m, pitch_m, yaw_m = imu.read_fusedEuler(0)
     #MyKalman.measure([roll,pitch, yaw])
     
     #Run the PIDs
-    roll = rollPID.update(roll - roll_m, 0)
-    pitch = pitchPID.update(pitch - pitch_m, 0)
-    yaw = yawPID.update(yaw - yaw_m, 0)
+    roll = rollPID.update(roll_d - roll_m, 0)
+    pitch = pitchPID.update(pitch_d - pitch_m, 0)
+    yaw = yawPID.update(yaw_d - yaw_m, 0)
     #z = zPID.update(z_m - z)
     #xpos = xposPID.update(xpos_m - xpos)
     #ypos = yposPID.update(ypos_m - ypos)
@@ -94,6 +91,10 @@ while 1:
 
     #Log the values:
     print "**************************"
+    print "Desired angles:"
+    print "     pitch:" + str(pitch_d)
+    print "     roll:" + str(roll_d)
+    print "     yaw:" + str(yaw_d)    
     print "Measured angles:"
     print "     pitch:" + str(pitch_m)
     print "     roll:" + str(roll_m)
@@ -107,10 +108,10 @@ while 1:
 
     #QUAD_FORMATION_NORMAL first approach    
     #TODO use the dynamical model equation to get the motor voltage
-    motorPowerM1 = limitThrust(thrust + pitch + yaw, 30);
-    motorPowerM2 = limitThrust(thrust - roll - yaw, 30);
-    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 30);
-    motorPowerM4 =  limitThrust(thrust + roll - yaw, 30);
+    motorPowerM1 = limitThrust(thrust + pitch + yaw, 100);
+    motorPowerM2 = limitThrust(thrust - roll - yaw, 100);
+    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 100);
+    motorPowerM4 =  limitThrust(thrust + roll - yaw, 100);
 
     #Log the motor powers:
     print "------------------------"
@@ -136,6 +137,10 @@ while 1:
     #delay = 4e-3 #delay ms (250 Hz) 
     # delay = 20e-3 #delay ms (50 Hz)
     # time.sleep(delay)
+
+    time_s = clock() - start
+    frequency = 1./time_s
+    print "frequency (Hz): "+str(frequency)
 
 ############################
 ############################

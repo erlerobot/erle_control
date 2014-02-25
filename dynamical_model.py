@@ -56,15 +56,16 @@ class Dynamical_Model:
         self.Izz = 1.121e-2
 
         # motor parameters
-        # TODO complete the motor parameters
-        self.k_m = #TODO # torque constant
-        self.tau = #TODO # motor time constant
-        self.eta = #TODO # motor efficiency
-        self.Omega_0 = #TODO # point of linearization of the rotor speeds
+        # TODO complete the motor parameters        
+        self.k_m = 1 #TODO # torque constant
+        self.tau = 1 #TODO # motor time constant
+        self.eta = 1 #TODO # motor efficiency
+        self.Omega_0 = 1 #TODO # point of linearization of the rotor speeds
+
         self.r = 4 # Reduction ratio
         self.J_t = 6.0100e-5 # Rotor inertia [kg m^2]
 
-        # matrix for calculating the motor voltages form the control inputs
+        # matrix for calculating the motor voltages from the control inputs
         self.m = np.matrix( ((1/(4*self.b),0, 1/(2*self.b), -1/(4*self.b)), 
                         (1/(4*self.b),-1/(2*self.b), 0, 1/(4*self.b)), 
                         (1/(4*self.b),0, -1/(2*self.b), -1/(4*self.b)), 
