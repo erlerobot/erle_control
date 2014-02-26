@@ -25,8 +25,7 @@ When testing is important to power off the motors when the
 script is stoped through SIGINT
 """
 def signal_handler(signal, frame):
-        print 'Setting all motors to 0...'
-        
+        print 'Setting all motors to 0...'        
         motor1.setSpeedBrushless(0)
         motor2.setSpeedBrushless(0)
         motor3.setSpeedBrushless(0)
@@ -34,6 +33,13 @@ def signal_handler(signal, frame):
 
         for mot in motors:
             mot.go()
+
+        # calculate the frequency of the main loop
+        sum = 0
+        for f in frequencies:
+            sum+=f
+        print "average frequency (Hz): "+str(sum/len(frequencies))
+        print "minimum frequency (Hz): "+str(min(frequencies))
 
         sys.exit(0)
 
@@ -56,8 +62,7 @@ signal.signal(signal.SIGINT, signal_handler)
 # variables
 ############################
 
-logging = 1
-logging_time = 1
+logging = 0
 limit_thrust = 40
 
 roll_d = 0
@@ -200,29 +205,28 @@ while 1:
     #Kalman Prediction
     #MyKalman.predict()
 
-    #delay = 4e-3 #delay ms (250 Hz) 
-    # delay = 20e-3 #delay ms (50 Hz)
-    # sleep(delay)
 
     # calculate the time each iteration takes
     time_u = (dt.datetime.now() - start).microseconds
-
-    # if frequency > 50:
-    #     sleep(20e-3 - time_u/1e6)
-
-    # if logging_time:
-    #     print "time (s): "+str(time_u/1e6)
+    time_s = time_u/1e6
     frequency = 1e6/time_u
-    if logging_time:
-        print "frequency (Hz): "+str(frequency)
 
-    # average frequency of the loop
+    # force 50 Hz loop
+    if time_s < 20e-3: #50 Hz
+        sleep(20e-3 - time_s)
+
+    # # force 60 Hz loop
+    # if time_s < 16.66e-3: #50 Hz
+    #     sleep(16.66e-3 - time_s)
+
+    # # force 70 Hz loop
+    # if time_s < 14.28e-3: #50 Hz
+    #     sleep(14.28e-3 - time_s)
+
+
+    time_u = (dt.datetime.now() - start).microseconds
+    frequency = 1e6/time_u    
     frequencies.append(frequency)
-    sum = 0
-    for f in frequencies:
-        sum+=f
-    if logging_time:
-        print "average frequency (Hz): "+str(sum/len(frequencies))
 
 
 ############################
