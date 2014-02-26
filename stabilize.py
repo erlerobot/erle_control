@@ -17,7 +17,25 @@ from pid import PID
 from time import sleep
 import datetime as dt
 from dynamical_model import Dynamical_Model
+import signal
+import sys
 
+"""
+When testing is important to power off the motors when the
+script is stoped through SIGINT
+"""
+def signal_handler(signal, frame):
+        print 'Setting all motors to 0...'
+        
+        motor1.setSpeedBrushless(0)
+        motor2.setSpeedBrushless(0)
+        motor3.setSpeedBrushless(0)
+        motor4.setSpeedBrushless(0)
+
+        for mot in motors:
+            mot.go()
+
+        sys.exit(0)
 
 """ Limits the thrust passed to the motors
     in the range (-100,100)
@@ -29,12 +47,26 @@ def limitThrust(thrust, upperLimit = 100, lowerLimit = 0):
         thrust = lowerLimit
     return thrust
 
+
+# Set the handler for SIGINT
+signal.signal(signal.SIGINT, signal_handler)
+
+
 ############################
-# logging variables
+# variables
 ############################
 
 logging = 1
 logging_time = 1
+limit_thrust = 40
+
+roll_d = 0
+pitch_d = 0
+yaw_d = 0
+z_d = 10
+#xpos = 0
+#ypos = 0
+
 ############################
 
 #instantiate IMU
@@ -53,16 +85,22 @@ motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
 # instantiate PID controllers
-rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
-pitchPID=PID(0.9, 0.2, 0.3)
-yawPID=PID(0.06, 0.02, 0.01)
-#zPID=PID(8, 10, 5)
+# rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
+# pitchPID=PID(0.9, 0.2, 0.3)
+# yawPID=PID(0.06, 0.02, 0.01)
+# zPID=PID(0.9, 0.2, 0.1)
+
+rollPID=PID(1, 0, 0) # Kp, Kd, Ki
+pitchPID=PID(1, 0, 0)
+yawPID=PID(0, 0, 0)
+zPID=PID(1, 0, 0)
+
+
 #xposPID=PID(-0.09, -0.1, 0)
 #yposPID=PID(-0.09, -0.1, 0)
 
 # test variables
 frequencies = []
-u_values = []
 
 if logging:
     print "------------------------"
@@ -74,33 +112,33 @@ if logging:
 while 1:
     start = dt.datetime.now()
 
-    # pitch, roll and yaw DESIRED:
-    #  FOR NOW THEY ARE KEPT TO 0 BUT THIS INFORMATION SHOULD
-    #  COME FROM THE TELEOPERATION DEVICE/MISSION SYSTEM
-    roll_d = 0
-    pitch_d = 0
-    yaw_d = 0
-    #z_d = 0
-    #xpos = 0
-    #ypos = 0
+    # pitch, roll and yaw DESIRED, get FROM THE TELEOPERATOR (for now, global vars are used)
+    # roll_d = 0
+    # pitch_d = 0
+    # yaw_d = 0
+    # z_d = 10
+    # #xpos = 0
+    # #ypos = 0
     
-    #Measure angles    s
+    #Measure angles  
     #roll_m, pitch_m, yaw_m = imu.read_fusedEuler()
     roll_m, pitch_m, yaw_m = imu.read_fusedEuler(0)
     #MyKalman.measure([roll,pitch, yaw])
+
+    z_m = 0 # putting this is the same as telling it to always increase the thrust (go up)
     
     #Run the PIDs
     roll = rollPID.update(roll_d - roll_m, 0)
     pitch = pitchPID.update(pitch_d - pitch_m, 0)
     yaw = yawPID.update(yaw_d - yaw_m, 0)
-    #z = zPID.update(z_d - z_m)
+    z = zPID.update(z_d - z_m, 0)
     #xpos = xposPID.update(xpos_d - xpos_m)
     #ypos = yposPID.update(ypos_d - ypos_m)
 
     #TODO change this parameter and see the behaviour
     #thrust is provided by the controller (NOTE: this is also treated as "z" and it should use the zPID controller)
     # the point of hovering is 35% duty cycle in the motors
-    thrust = 1
+
 
     if logging:
         #Log the values:
@@ -108,66 +146,74 @@ while 1:
         print "Desired angles:"
         print "     pitch:" + str(pitch_d)
         print "     roll:" + str(roll_d)
-        print "     yaw:" + str(yaw_d)    
+        print "     yaw:" + str(yaw_d)
+        print "     z:" + str(z_d)    
         print "Measured angles:"
         print "     pitch:" + str(pitch_m)
         print "     roll:" + str(roll_m)
         print "     yaw:" + str(yaw_m)
+        # print "     thrust (z):" + str(z_d)    # maybe using some sensor?
         print "PID output angles:"
         print "     pitch:" + str(pitch)
         print "     roll:" + str(roll)
-        print "     yaw:" + str(yaw)
-        print "thrust:" + str(thrust)
+        print "     yaw:" + str(yaw)       
+        print "     z:" + str(z)       
     
 
     # use the dynamical_model, returns u=[u_m1, u_m2, u_m3, u_m3]
-    u = dyn_model.motor_inversion(thrust, roll, pitch, yaw)
-    # u comes in the form [[ 351.0911185   117.65355114  286.29403363           nan]]
+    u = dyn_model.motor_inversion(z, roll, pitch, yaw)
+
+    motorPowerM1 = limitThrust(u[0], limit_thrust);
+    motorPowerM2 = limitThrust(u[1], limit_thrust);
+    motorPowerM3 = limitThrust(u[2], limit_thrust);
+    motorPowerM4 = limitThrust(u[3], limit_thrust);
 
     if logging:
         #Log the motor powers:
         print "------------------------"
-        print "u1 (motor1):" + str(u[0,0])
-        print "u2 (motor2):" + str(u[0,1])
-        print "u3 (motor3):" + str(u[0,2])
-        print "u4 (motor4):" + str(u[0,3])
+        print "motorPowerM1 (method 1):" + str(motorPowerM1)
+        print "motorPowerM2 (method 1):" + str(motorPowerM2)
+        print "motorPowerM3 (method 1):" + str(motorPowerM3)
+        print "motorPowerM4 (method 1):" + str(motorPowerM4)
         print "**************************"
 
-    u_values.append(u[0,0])
-    u_values.append(u[0,1])
-    u_values.append(u[0,2])
-    u_values.append(u[0,3])
-
-    print "max u: "+str(max(u_values))
-    print "min u: "+str(min(u_values))
-
+    # #Set motor speeds
+    # motor1.setSpeedBrushless(motorPowerM1)
+    # motor2.setSpeedBrushless(motorPowerM2)
+    # motor3.setSpeedBrushless(motorPowerM3)
+    # motor4.setSpeedBrushless(motorPowerM4)
+    
+    # #Start Motors
+    # for mot in motors:
+    #     mot.go()
+        
     
     #QUAD_FORMATION_NORMAL first approach        
-    motorPowerM1 = limitThrust(thrust + pitch + yaw, 40);
-    motorPowerM2 = limitThrust(thrust - roll - yaw, 40);
-    motorPowerM3 =  limitThrust(thrust - pitch + yaw, 40);
-    motorPowerM4 =  limitThrust(thrust + roll - yaw, 40);
+    motorPowerM1 = limitThrust(z + pitch + yaw, limit_thrust);
+    motorPowerM2 = limitThrust(z - roll - yaw, limit_thrust);
+    motorPowerM3 =  limitThrust(z - pitch + yaw, limit_thrust);
+    motorPowerM4 =  limitThrust(z + roll - yaw, limit_thrust);
 
     if logging:
         #Log the motor powers:
         print "------------------------"
-        print "motorPowerM1:" + str(motorPowerM1)
-        print "motorPowerM2:" + str(motorPowerM2)
-        print "motorPowerM3:" + str(motorPowerM3)
-        print "motorPowerM4:" + str(motorPowerM4)
+        print "motorPowerM1 (method 2):" + str(motorPowerM1)
+        print "motorPowerM2 (method 2):" + str(motorPowerM2)
+        print "motorPowerM3 (method 2):" + str(motorPowerM3)
+        print "motorPowerM4 (method 2):" + str(motorPowerM4)
         print "**************************"
+
     
-    """
     #Set motor speeds
-    motor1.setSpeedBrushless(u[0])
-    motor2.setSpeedBrushless(u[1])
-    motor3.setSpeedBrushless(u[2])
-    motor4.setSpeedBrushless(u[3])
+    motor1.setSpeedBrushless(motorPowerM1)
+    motor2.setSpeedBrushless(motorPowerM2)
+    motor3.setSpeedBrushless(motorPowerM3)
+    motor4.setSpeedBrushless(motorPowerM4)
     
     #Start Motors
     for mot in motors:
         mot.go()
-    """
+    
 
     #Kalman Prediction
     #MyKalman.predict()

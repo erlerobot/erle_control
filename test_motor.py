@@ -12,7 +12,7 @@
 @brief Test the motors behaviour
 
 The call to this method is:
-     python text_motor.py [speed] [time]
+     python text_motor.py [speed = 10] [time = 5]
 '''
 
 from motors import Motor
@@ -20,25 +20,6 @@ import Adafruit_BBIO.GPIO as GPIO
 import time
 import os
 import sys
-
-###############################
-##Configure GPIOs, necessary when using the DC Brushed motors
-###############################
-#GPIO.setup("P8_4", GPIO.OUT) 
-#GPIO.output("P8_4", GPIO.HIGH)
-#
-#GPIO.setup("P8_11", GPIO.OUT)
-#GPIO.output("P8_11", GPIO.HIGH)
-#
-#GPIO.setup("P9_15", GPIO.OUT)
-#GPIO.output("P9_15", GPIO.HIGH)
-#
-#GPIO.setup("P9_23", GPIO.OUT)
-#GPIO.output("P9_23", GPIO.HIGH)
-###############################
-
-# initial timer
-#time.sleep(10)
 
 speed = 10
 if len(sys.argv) > 1:

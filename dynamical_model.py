@@ -89,7 +89,33 @@ class Dynamical_Model:
         # the motor voltages
         u = (self.k_m * self.tau) * ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.power(self.r,3)*self.J_t))\
             * np.sqrt(np.dot(self.m,U))- self.d*np.power(self.Omega_0,3)/(self.eta*np.power(self.r,3)*self.J_t))
-        return u
+
+        # u comes in the form [[ 351.0911185   117.65355114  286.29403363           nan]] where nan denotes that this value
+        # should be put to 0
+        # values goes more or less up to 1500 so they are divided by 15 so that they fall in the 0-100 range.
+
+        if math.isnan(u[0,0]): 
+            motorPowerM1 = 0
+        else:
+            motorPowerM1 = u[0,0]/15 
+
+        if math.isnan(u[0,1]):
+            motorPowerM2 = 0
+        else:
+            motorPowerM2 = u[0,1]/15
+
+        if math.isnan(u[0,2]):
+            motorPowerM3 = 0
+        else:
+            motorPowerM3 = u[0,2]/15 
+
+        if math.isnan(u[0,3]):
+            motorPowerM4 = 0
+        else:
+            motorPowerM4 = u[0,3]/15 
+
+        ur = [motorPowerM1, motorPowerM2, motorPowerM3, motorPowerM4] # to be limited
+        return ur
 
 
 
