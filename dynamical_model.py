@@ -8,11 +8,15 @@
                                           
 @author: Víctor Mayoral Vilches <victor@erlerobot.com>
 @description: This class implements the dynamical model of a quadrotor. 
+
 It does so following the dynamical model studied at the Master Thesis "Design, 
 implementation and ﬂight test of indoor navigation and control system for a 
 quadrotor UAV"
 (http://www.st.ewi.tudelft.nl/~koen/in4073/Resources/MSc_thesis_X-UFO.pdf)
+
+The implementation of the Crazyflie is also reflected on motor_inversion2
 '''
+
 import math
 import numpy as np
 
@@ -73,7 +77,7 @@ class Dynamical_Model:
 
 
 
-    """ Compute the motor voltages from the control inputs. Keep in mind when
+    """ Compute the motor voltages from the control inputs following M.Wieremma MS thesis (MSc_thesis_X-UFO). Keep in mind when
         passing parameters the following correspondences.
             - U1: thrust
             - U2: roll
@@ -82,7 +86,7 @@ class Dynamical_Model:
 
         @returns: u=[u_m1, u_m2, u_m3, u_m3], motor voltages
     """
-    def motor_inversion(self, thrust, roll, pitch, yaw):
+    def motor_inversion1(self, thrust, roll, pitch, yaw, logging = 0):
         # the control inputs
         U = np.array( ((thrust, roll, pitch, yaw)) )
         Um = np.matrix(U).T
@@ -90,7 +94,7 @@ class Dynamical_Model:
         u = (self.k_m * self.tau) * ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.power(self.r,3)*self.J_t))\
             * np.sqrt(np.dot(self.m,U))- self.d*np.power(self.Omega_0,3)/(self.eta*np.power(self.r,3)*self.J_t))
 
-        # u comes in the form [[ 351.0911185   117.65355114  286.29403363           nan]] where nan denotes that this value
+        # u comes in the form [[ 351.0911185   117.65355114  286.29403363  nan]] where nan denotes that this value
         # should be put to 0
         # values goes more or less up to 1500 so they are divided by 15 so that they fall in the 0-100 range.
 
@@ -114,8 +118,67 @@ class Dynamical_Model:
         else:
             motorPowerM4 = u[0,3]/15 
 
+        if logging:
+            #Log the motor powers:
+            print "------------------------"
+            print "motorPowerM1 (method 1):" + str(motorPowerM1)
+            print "motorPowerM2 (method 1):" + str(motorPowerM2)
+            print "motorPowerM3 (method 1):" + str(motorPowerM3)
+            print "motorPowerM4 (method 1):" + str(motorPowerM4)
+            print "**************************"
+
         ur = [motorPowerM1, motorPowerM2, motorPowerM3, motorPowerM4] # to be limited
         return ur
 
+    """ Compute the motor voltages from the control inputs 
+        following bitcraze Crazyflie implementation.
 
+        @returns: u=[u_m1, u_m2, u_m3, u_m3], motor voltages
+    """
+    def motor_inversion2(self, thrust, roll, pitch, yaw, logging = 0):
+        #QUAD_FORMATION_NORMAL
+        motorPowerM1 = thrust + pitch + yaw
+        motorPowerM2 = thrust - roll - yaw
+        motorPowerM3 = thrust - pitch + yaw
+        motorPowerM4 = thrust + roll - yaw
+
+        if logging:
+            #Log the motor powers:
+            print "------------------------"
+            print "motorPowerM1 (method 2):" + str(motorPowerM1)
+            print "motorPowerM2 (method 2):" + str(motorPowerM2)
+            print "motorPowerM3 (method 2):" + str(motorPowerM3)
+            print "motorPowerM4 (method 2):" + str(motorPowerM4)
+            print "**************************"
+
+        ur = [motorPowerM1, motorPowerM2, motorPowerM3, motorPowerM4] # to be limited        
+        return ur
+
+
+    """ Compute the motor voltages from the control inputs 
+        using a HACKED version of the implementation used in the crazyflie
+
+        M1 <-> M3
+        M2 <-> M4
+
+        @returns: u=[u_m1, u_m2, u_m3, u_m3], motor voltages
+    """
+    def motor_inversion3(self, thrust, roll, pitch, yaw, logging = 0):
+        #QUAD_FORMATION_NORMAL
+        motorPowerM3 = thrust + pitch + yaw
+        motorPowerM4 = thrust - roll - yaw
+        motorPowerM1 = thrust - pitch + yaw
+        motorPowerM2 = thrust + roll - yaw
+
+        if logging:
+            #Log the motor powers:
+            print "------------------------"
+            print "motorPowerM1 (method 3):" + str(motorPowerM1)
+            print "motorPowerM2 (method 3):" + str(motorPowerM2)
+            print "motorPowerM3 (method 3):" + str(motorPowerM3)
+            print "motorPowerM4 (method 3):" + str(motorPowerM4)
+            print "**************************"
+
+        ur = [motorPowerM1, motorPowerM2, motorPowerM3, motorPowerM4] # to be limited        
+        return ur
 

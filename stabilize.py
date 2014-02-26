@@ -159,9 +159,15 @@ while 1:
         print "     yaw:" + str(yaw)       
         print "     z:" + str(z)       
     
+    # using M. Wieremma's thesis    
+    #u = dyn_model.motor_inversion1(z, roll, pitch, yaw, logging)
+    
+    # using Crazyflie's implementation
+    #u = dyn_model.motor_inversion2(z, roll, pitch, yaw, logging)
+    
+    # using Crazyflie's HACKED implementation
+    u = dyn_model.motor_inversion3(z, roll, pitch, yaw, logging)
 
-    # use the dynamical_model, returns u=[u_m1, u_m2, u_m3, u_m3]
-    u = dyn_model.motor_inversion(z, roll, pitch, yaw)
 
     motorPowerM1 = limitThrust(u[0], limit_thrust);
     motorPowerM2 = limitThrust(u[1], limit_thrust);
@@ -171,39 +177,12 @@ while 1:
     if logging:
         #Log the motor powers:
         print "------------------------"
-        print "motorPowerM1 (method 1):" + str(motorPowerM1)
-        print "motorPowerM2 (method 1):" + str(motorPowerM2)
-        print "motorPowerM3 (method 1):" + str(motorPowerM3)
-        print "motorPowerM4 (method 1):" + str(motorPowerM4)
+        print "motorPowerM1 (limited):" + str(motorPowerM1)
+        print "motorPowerM2 (limited):" + str(motorPowerM2)
+        print "motorPowerM3 (limited):" + str(motorPowerM3)
+        print "motorPowerM4 (limited):" + str(motorPowerM4)
         print "**************************"
 
-    # #Set motor speeds
-    # motor1.setSpeedBrushless(motorPowerM1)
-    # motor2.setSpeedBrushless(motorPowerM2)
-    # motor3.setSpeedBrushless(motorPowerM3)
-    # motor4.setSpeedBrushless(motorPowerM4)
-    
-    # #Start Motors
-    # for mot in motors:
-    #     mot.go()
-        
-    
-    #QUAD_FORMATION_NORMAL first approach        
-    motorPowerM1 = limitThrust(z + pitch + yaw, limit_thrust);
-    motorPowerM2 = limitThrust(z - roll - yaw, limit_thrust);
-    motorPowerM3 =  limitThrust(z - pitch + yaw, limit_thrust);
-    motorPowerM4 =  limitThrust(z + roll - yaw, limit_thrust);
-
-    if logging:
-        #Log the motor powers:
-        print "------------------------"
-        print "motorPowerM1 (method 2):" + str(motorPowerM1)
-        print "motorPowerM2 (method 2):" + str(motorPowerM2)
-        print "motorPowerM3 (method 2):" + str(motorPowerM3)
-        print "motorPowerM4 (method 2):" + str(motorPowerM4)
-        print "**************************"
-
-    
     #Set motor speeds
     motor1.setSpeedBrushless(motorPowerM1)
     motor2.setSpeedBrushless(motorPowerM2)
@@ -213,7 +192,7 @@ while 1:
     #Start Motors
     for mot in motors:
         mot.go()
-    
+        
 
     #Kalman Prediction
     #MyKalman.predict()
