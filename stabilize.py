@@ -166,7 +166,10 @@ while 1:
     #u = dyn_model.motor_inversion2(z, roll, pitch, yaw, logging)
     
     # using Crazyflie's HACKED implementation
-    u = dyn_model.motor_inversion3(z, roll, pitch, yaw, logging)
+    #u = dyn_model.motor_inversion3(z, roll, pitch, yaw, logging)
+
+    # using M. Wieremma's thesis HACKED impl
+    u = dyn_model.motor_inversion4(z, roll, pitch, yaw, logging)
 
 
     motorPowerM1 = limitThrust(u[0], limit_thrust);
@@ -207,8 +210,8 @@ while 1:
     # if frequency > 50:
     #     sleep(20e-3 - time_u/1e6)
 
-    if logging_time:
-        print "time (s): "+str(time_u/1e6)
+    # if logging_time:
+    #     print "time (s): "+str(time_u/1e6)
     frequency = 1e6/time_u
     if logging_time:
         print "frequency (Hz): "+str(frequency)

@@ -156,7 +156,9 @@ class Dynamical_Model:
 
 
     """ Compute the motor voltages from the control inputs 
-        using a HACKED version of the implementation used in the crazyflie
+        using a HACKED version of the implementation used in the crazyflie.
+        This hack is because the reference frames of Erle are different from the ones
+        adopted by the crazyflie.
 
         M1 <-> M3
         M2 <-> M4
@@ -180,5 +182,65 @@ class Dynamical_Model:
             print "**************************"
 
         ur = [motorPowerM1, motorPowerM2, motorPowerM3, motorPowerM4] # to be limited        
+        return ur
+
+    """ Compute the motor voltages from the control inputs following M.Wieremma MS thesis (MSc_thesis_X-UFO). 
+
+        THE DYNAMICAL MODEL DOCUMENTED IN THE MS Thesis HAS BEEN HACKED (M1 <-> M3, M2 <-> M4) BECAUSE THE REFERENCE FRAMES ADOPTED
+        IN THE DOCUMENT INDICATES THAT THE MOTORS ROTATE IN OPPOSITE DIRECTIONS.
+
+        Keep in mind when passing parameters the following correspondences.
+
+            - U1: thrust
+            - U2: roll
+            - U3: pitch
+            - U4: yaw
+
+        @returns: u=[u_m1, u_m2, u_m3, u_m3], motor voltages
+    """
+    def motor_inversion4(self, thrust, roll, pitch, yaw, logging = 0):
+        # the control inputs
+        U = np.array( ((thrust, roll, pitch, yaw)) )
+        Um = np.matrix(U).T
+        # the motor voltages
+        u = (self.k_m * self.tau) * ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.power(self.r,3)*self.J_t))\
+            * np.sqrt(np.dot(self.m,U))- self.d*np.power(self.Omega_0,3)/(self.eta*np.power(self.r,3)*self.J_t))
+
+        # u comes in the form [[ 351.0911185   117.65355114  286.29403363  nan]] where nan denotes that this value
+        # should be put to 0
+        # values goes more or less up to 1500 so they are divided by 15 so that they fall in the 0-100 range.
+
+        # FIXED APPLIED DUE TO THE DIFFERENCE IN THE REFERENCE FRAMES
+
+        if math.isnan(u[0,0]): 
+            motorPowerM3 = 0
+        else:
+            motorPowerM3 = u[0,0]/15 
+
+        if math.isnan(u[0,1]):
+            motorPowerM4 = 0
+        else:
+            motorPowerM4 = u[0,1]/15
+
+        if math.isnan(u[0,2]):
+            motorPowerM1 = 0
+        else:
+            motorPowerM1 = u[0,2]/15 
+
+        if math.isnan(u[0,3]):
+            motorPowerM2 = 0
+        else:
+            motorPowerM2 = u[0,3]/15 
+
+        if logging:
+            #Log the motor powers:
+            print "------------------------"
+            print "motorPowerM1 (method 4):" + str(motorPowerM1)
+            print "motorPowerM2 (method 4):" + str(motorPowerM2)
+            print "motorPowerM3 (method 4):" + str(motorPowerM3)
+            print "motorPowerM4 (method 4):" + str(motorPowerM4)
+            print "**************************"
+
+        ur = [motorPowerM1, motorPowerM2, motorPowerM3, motorPowerM4] # to be limited
         return ur
 
