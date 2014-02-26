@@ -90,15 +90,17 @@ motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
 # instantiate PID controllers
-# rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
-# pitchPID=PID(0.9, 0.2, 0.3)
-# yawPID=PID(0.06, 0.02, 0.01)
-# zPID=PID(0.9, 0.2, 0.1)
-
-rollPID=PID(1, 0, 0) # Kp, Kd, Ki
-pitchPID=PID(1, 0, 0)
+rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
+pitchPID=PID(0.9, 0.2, 0.3)
+#yawPID=PID(0.06, 0.02, 0.01)
 yawPID=PID(0, 0, 0)
+#zPID=PID(0.9, 0.2, 0.1)
 zPID=PID(1, 0, 0)
+
+# rollPID=PID(1, 0, 0) # Kp, Kd, Ki
+# pitchPID=PID(1, 0, 0)
+# yawPID=PID(0, 0, 0)
+# zPID=PID(1, 0, 0)
 
 
 #xposPID=PID(-0.09, -0.1, 0)
