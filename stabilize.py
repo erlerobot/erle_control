@@ -9,10 +9,6 @@
 @author: Víctor Mayoral Vilches <victor@erlerobot.com>
 @description: Code for stabilizing the quadrotor. It runs and infinite
 loop that adjust the 4 motors according to the IMU readings.
-
-This code is implementing the control strategy desribed by Menno Wierema
-in his MS thesis: "Design, implementation and flight test of indoor navigation and control
-for a quadrotor UAV"
 '''
 
 from imu import IMU
@@ -64,7 +60,10 @@ yawPID=PID(0.06, 0.02, 0.01)
 #xposPID=PID(-0.09, -0.1, 0)
 #yposPID=PID(-0.09, -0.1, 0)
 
+# test variables
 frequencies = []
+u_values = []
+
 if logging:
     print "------------------------"
     print "     stabilize loop     "
@@ -123,17 +122,26 @@ while 1:
 
     # use the dynamical_model, returns u=[u_m1, u_m2, u_m3, u_m3]
     u = dyn_model.motor_inversion(thrust, roll, pitch, yaw)
+    # u comes in the form [[ 351.0911185   117.65355114  286.29403363           nan]]
 
     if logging:
         #Log the motor powers:
         print "------------------------"
-        print "u1 (motor1):" + str(u[0])
-        print "u2 (motor2):" + str(u[1])
-        print "u3 (motor3):" + str(u[2])
-        print "u4 (motor4):" + str(u[3])
+        print "u1 (motor1):" + str(u[0,0])
+        print "u2 (motor2):" + str(u[0,1])
+        print "u3 (motor3):" + str(u[0,2])
+        print "u4 (motor4):" + str(u[0,3])
         print "**************************"
 
-    """
+    u_values.append(u[0,0])
+    u_values.append(u[0,1])
+    u_values.append(u[0,2])
+    u_values.append(u[0,3])
+
+    print "max u: "+str(max(u_values))
+    print "min u: "+str(min(u_values))
+
+    
     #QUAD_FORMATION_NORMAL first approach        
     motorPowerM1 = limitThrust(thrust + pitch + yaw, 40);
     motorPowerM2 = limitThrust(thrust - roll - yaw, 40);
@@ -148,10 +156,8 @@ while 1:
         print "motorPowerM3:" + str(motorPowerM3)
         print "motorPowerM4:" + str(motorPowerM4)
         print "**************************"
-    """
-
-
     
+    """
     #Set motor speeds
     motor1.setSpeedBrushless(u[0])
     motor2.setSpeedBrushless(u[1])
@@ -161,7 +167,8 @@ while 1:
     #Start Motors
     for mot in motors:
         mot.go()
-    
+    """
+
     #Kalman Prediction
     #MyKalman.predict()
 

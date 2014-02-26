@@ -73,7 +73,7 @@ class Motor:
                 self.duty_IN1 = 0
                 self.duty_IN2 = abs(speed)            
         else:
-            raise Exception("Speed provided not in the [-100,100] range!")
+            raise Exception("Speed provided not in the [0,100] range!")
 
     def setSpeedBrushless(self, speed):
         """ @brief Set the duties according to the speed attribute for the DC Brushless motors            
@@ -81,7 +81,7 @@ class Motor:
         if speed<=self.max_speed or speed>=self.min_speed:
             self.duty = speed
         else:
-            raise Exception("Speed provided not in the [%s,%s] range!" % self.min_speed, self.max_speed)
+            raise Exception("Speed provided not in the [0,100] range!")
 
 
     def go(self):

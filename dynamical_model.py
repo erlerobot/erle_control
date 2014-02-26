@@ -29,7 +29,7 @@ class Dynamical_Model:
         self.Vol = 0.00281784516 # Volume [m3] (((86.36*86.36)/1000) * 
         self.m = 60e-3 # quadrotor mass [kg]
         self.h = 17e-3 # Vertical distance between CoG and propellers plan [m]                         #                  (8*29.99/1000) * (1.5748/1000))       
-        self.b = 3.13e-5 # thrush factor in hover [N s^2]
+        self.b = 3.13e-5 # thrust factor in hover [N s^2]
         self.d = 7.5e-7 # drag factor in hover [N m s^2]
         self.W_prop = (self.m * self.g)/self.P # weight of the quadrotor per propeller [N]
         self.Omega_H = math.sqrt(self.W_prop/self.b) # propeller speed at hover
@@ -82,12 +82,13 @@ class Dynamical_Model:
 
         @returns: u=[u_m1, u_m2, u_m3, u_m3], motor voltages
     """
-    def motor_inversion(thrust, roll, pitch, yaw):
+    def motor_inversion(self, thrust, roll, pitch, yaw):
         # the control inputs
         U = np.array( ((thrust, roll, pitch, yaw)) )
+        Um = np.matrix(U).T
         # the motor voltages
-        u = self.k_m * self.tau ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.pow(self.r,3)*self.J_t))\
-            *np.sqrt(np.dot(self.m,U))- self.d*np.pow(self.Omega_0,3)/(self.eta*np.pow(self.r,3)*self.J_t))
+        u = (self.k_m * self.tau) * ((1/self.tau + 2*self.d*self.Omega_0/(self.eta*np.power(self.r,3)*self.J_t))\
+            * np.sqrt(np.dot(self.m,U))- self.d*np.power(self.Omega_0,3)/(self.eta*np.power(self.r,3)*self.J_t))
         return u
 
 
