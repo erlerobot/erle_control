@@ -63,12 +63,12 @@ signal.signal(signal.SIGINT, signal_handler)
 ############################
 
 logging = 0
-limit_thrust = 40
+limit_thrust = 50
 
 roll_d = 0
 pitch_d = 0
 yaw_d = 0
-z_d = 10
+z_d = 30
 #xpos = 0
 #ypos = 0
 
@@ -90,17 +90,17 @@ motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
 # instantiate PID controllers
-rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
-pitchPID=PID(0.9, 0.2, 0.3)
-#yawPID=PID(0.06, 0.02, 0.01)
-yawPID=PID(0, 0, 0)
-#zPID=PID(0.9, 0.2, 0.1)
-zPID=PID(1, 0, 0)
-
-# rollPID=PID(1, 0, 0) # Kp, Kd, Ki
-# pitchPID=PID(1, 0, 0)
+# rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
+# pitchPID=PID(0.9, 0.2, 0.3)
+# #yawPID=PID(0.06, 0.02, 0.01)
 # yawPID=PID(0, 0, 0)
+# #zPID=PID(0.9, 0.2, 0.1)
 # zPID=PID(1, 0, 0)
+
+rollPID=PID(1, 0.1, 0.1) # Kp, Kd, Ki
+pitchPID=PID(1, 0.1, 0.1)
+yawPID=PID(0, 0, 0)
+zPID=PID(1, 0, 0)
 
 
 #xposPID=PID(-0.09, -0.1, 0)
