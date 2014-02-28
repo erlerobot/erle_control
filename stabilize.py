@@ -72,6 +72,16 @@ z_d = 40
 #xpos = 0
 #ypos = 0
 
+if len(sys.argv) > 1:
+    Kp = float(sys.argv[1])
+    Kd = float(sys.argv[2])
+    Ki = float(sys.argv[3])
+
+else:    
+    Kp = 2
+    Kd = 0
+    Ki = 0
+
 ############################
 
 #instantiate IMU
