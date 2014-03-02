@@ -18,7 +18,7 @@ class BT_Controller:
   """
   """
 
-  def __init__(self, thrust_d = 40, pitch_d = 0, roll_d = 0, yaw_d = 0):
+  def __init__(self, thrust_d = 0, pitch_d = 0, roll_d = 0, yaw_d = 0):
     self.thrust_d = thrust_d
     self.pitch_d = pitch_d
     self.roll_d = roll_d

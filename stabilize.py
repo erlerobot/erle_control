@@ -73,10 +73,11 @@ limit_thrust = 70
 roll_d = 0
 pitch_d = 0
 yaw_d = 0
-z_d = 40
+z_d = 0
 #xpos = 0
 #ypos = 0
 
+# attitude constants
 if len(sys.argv) > 1:
     Kp = float(sys.argv[1])
     Kd = float(sys.argv[2])
@@ -109,19 +110,10 @@ motor4=Motor(4)
 motors=[motor1,motor2,motor3,motor4]
 
 # instantiate PID controllers
-# rollPID=PID(0.9, 0.2, 0.3) # Kp, Kd, Ki
-# pitchPID=PID(0.9, 0.2, 0.3)
-# #yawPID=PID(0.06, 0.02, 0.01)
-# yawPID=PID(0, 0, 0)
-# #zPID=PID(0.9, 0.2, 0.1)
-# zPID=PID(1, 0, 0)
-
-rollPID=PID(3, 0, 0) # Kp, Kd, Ki
-pitchPID=PID(3, 0, 0)
+rollPID=PID(Kp, Kd, Ki) # Kp, Kd, Ki
+pitchPID=PID(Kp, Kd, Ki)
 yawPID=PID(0, 0, 0)
 zPID=PID(1, 0, 0)
-
-
 #xposPID=PID(-0.09, -0.1, 0)
 #yposPID=PID(-0.09, -0.1, 0)
 
@@ -200,11 +192,17 @@ while 1:
     # using M. Wieremma's thesis HACKED impl
     u = dyn_model.motor_inversion4(z, roll, pitch, yaw, logging)
 
-
-    motorPowerM1 = limitThrust(u[0], limit_thrust);
-    motorPowerM2 = limitThrust(u[1], limit_thrust);
-    motorPowerM3 = limitThrust(u[2], limit_thrust);
-    motorPowerM4 = limitThrust(u[3], limit_thrust);
+    #if the controller says that the thrust is 0, all motors to 0
+    if z_d == 0: 
+        motorPowerM1 = 0;
+        motorPowerM2 = 0;
+        motorPowerM3 = 0;
+        motorPowerM4 = 0;
+    else:
+        motorPowerM1 = limitThrust(u[0], limit_thrust);
+        motorPowerM2 = limitThrust(u[1], limit_thrust);
+        motorPowerM3 = limitThrust(u[2], limit_thrust);
+        motorPowerM4 = limitThrust(u[3], limit_thrust);
 
     if logging:
         #Log the motor powers:
