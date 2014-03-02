@@ -23,13 +23,15 @@ class BT_Controller:
     self.pitch_d = pitch_d
     self.roll_d = roll_d
     self.yaw_d = yaw_d
+    self.t = threading.Thread(target=self.server, args = (self.thrust_d,))
 
-  def run(self):
-          t = threading.Thread(target=self.sever, args = (self.thrust_d,))
-          t.start()
-          t.join()
-          print "bt-controller finished"
+  def run(self):          
+    self.t.start()
+    # t.join()
+    print "bt-controller finished"
 
+  def stop(self):
+    self.t.exit()
 
   def server(self, thrust):
     """

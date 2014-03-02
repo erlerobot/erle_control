@@ -42,6 +42,10 @@ def signal_handler(signal, frame):
         print "average frequency (Hz): "+str(sum/len(frequencies))
         print "minimum frequency (Hz): "+str(min(frequencies))
 
+
+        # # stop bt-controller NOT WORKING
+        # bt.stop()
+
         sys.exit(0)
 
 """ Limits the thrust passed to the motors
