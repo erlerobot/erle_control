@@ -19,7 +19,7 @@ import datetime as dt
 from dynamical_model import Dynamical_Model
 import signal
 import sys
-from bt-controller import BT_Controller
+from bt_controller import BT_Controller
 
 """
 When testing is important to power off the motors when the
