@@ -18,17 +18,20 @@ class BT_Controller:
   """
   """
 
-  def __init__(self, thrust_d = 0, pitch_d = 0, roll_d = 0, yaw_d = 0):
+  def __init__(self, thrust_d = 40, pitch_d = 0, roll_d = 0, yaw_d = 0):
     self.thrust_d = thrust_d
     self.pitch_d = pitch_d
     self.roll_d = roll_d
     self.yaw_d = yaw_d
     self.t = threading.Thread(target=self.server, args = (self.thrust_d,))
 
+  def getThrust(self):
+    return self.thrust_d
+
   def run(self):          
+    self.t.daemon = True
     self.t.start()
-    # t.join()
-    print "bt-controller finished"
+    # t.join()    
 
   def stop(self):
     self.t.exit()
@@ -65,7 +68,17 @@ class BT_Controller:
               firstByte_hexlify = binascii.hexlify(data[0])
 
               if firstByte == "U":
-                print "U received"
+                """
+                The received data follows the following pattern:
+                55 [U]
+                01 [left joystick "intensity"]
+                05 [left joystick "angle"]
+                00 [right joystick "intensity"]
+                00 [right joystick "angle"]
+                """
+                # print "U received"
+                # print "thrust: "+str(int(binascii.hexlify(data[1]),16)*10)
+                self.thrust_d = int(binascii.hexlify(data[1]),16)*10
               elif firstByte == "T":
                 print "T received"
               elif firstByte == "A":
@@ -81,7 +94,7 @@ class BT_Controller:
                 print "-----not recognized-----"
                 for d in data:
                   print binascii.hexlify(d)
-
+      
       except IOError:
           #pass
           print("disconnected")

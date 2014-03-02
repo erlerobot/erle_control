@@ -42,7 +42,7 @@ def signal_handler(signal, frame):
         print "average frequency (Hz): "+str(sum/len(frequencies))
         print "minimum frequency (Hz): "+str(min(frequencies))
 
-
+        print "killing the controller thread (bt thread)..."
         # # stop bt-controller NOT WORKING
         # bt.stop()
 
@@ -135,9 +135,12 @@ if logging:
 ############################
 #loop
 ############################
-while 1:
+while 1:    
     start = dt.datetime.now()
 
+    # process the input from the controller
+    z_d = bt.getThrust()
+    # print "z_d: "+str(z_d)
     # pitch, roll and yaw DESIRED, get FROM THE TELEOPERATOR (for now, global vars are used)
     # roll_d = 0
     # pitch_d = 0
