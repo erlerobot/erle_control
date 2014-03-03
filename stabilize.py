@@ -11,6 +11,8 @@
 loop that adjust the 4 motors according to the IMU readings.
 '''
 
+import os
+from subprocess import call
 from imu import IMU
 from motors import Motor
 from pid import PID
@@ -59,8 +61,21 @@ def limitThrust(thrust, upperLimit = 100, lowerLimit = 0):
     return thrust
 
 
+###############################
+#    INIT
+###############################
 # Set the handler for SIGINT
 signal.signal(signal.SIGINT, signal_handler)
+
+# Activate I2C-2
+retvalue = os.system("/bin/echo BB-I2C1 > $SLOTS")
+
+# Activate the motors with the init script
+retvalue = os.system("/usr/bin/python /root/erle_control/init_motors.py")
+
+# First time the IMU sensor raises an error (probably an error with the firmware or so). The following program readies the sensor to work properly:
+#retvalue = os.system("/root/erle_control/imu/imu -b 2")
+call(["/root/erle_control/imu/imu", "-b2"])
 
 
 ############################
